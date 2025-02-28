@@ -103,26 +103,58 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Handle nested fields
       if (field.includes('.')) {
         const [parentField, childField] = field.split('.');
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [parentField]: {
-              ...prev[section][parentField],
-              [childField]: value,
-            },
-          },
+        
+        // Create a new object with the updated nested field
+        const updatedSection = {
+          ...prev[section as keyof typeof prev],
         };
+        
+        // Handle the nested update safely with type checking
+        if (typeof updatedSection === 'object' && updatedSection !== null) {
+          const parentObj = updatedSection[parentField as keyof typeof updatedSection];
+          if (typeof parentObj === 'object' && parentObj !== null) {
+            // Create a new object for the parent field
+            const updatedParentObj = {
+              ...parentObj,
+              [childField]: value
+            };
+            
+            // Update the section with the new parent object
+            return {
+              ...prev,
+              [section]: {
+                ...updatedSection,
+                [parentField]: updatedParentObj
+              }
+            };
+          }
+        }
+        
+        return prev;
       }
       
-      // Handle regular fields
-      return {
-        ...prev,
-        [section]: {
-          ...prev[section],
-          [field]: value,
-        },
-      };
+      // Handle regular fields - create a properly typed update
+      if (section === 'improvementGoals' || section === 'lifeObjectives' || section === 'currentStep') {
+        // These fields don't have subfields that need updating
+        return {
+          ...prev,
+          [section]: value
+        };
+      } else {
+        // For object-type sections that have subfields
+        const sectionObj = prev[section];
+        if (typeof sectionObj === 'object' && sectionObj !== null) {
+          return {
+            ...prev,
+            [section]: {
+              ...sectionObj,
+              [field]: value
+            }
+          };
+        }
+        
+        return prev;
+      }
     });
   };
 
