@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -148,8 +147,7 @@ const QuestionnaireForm: React.FC = () => {
                   ? 'bg-accent text-white' 
                   : index < formData.currentStep 
                     ? 'bg-gray-100 text-gray-500 border border-gray-200' 
-                    : 'bg-gray-100 text-gray-300'}`}
-              >
+                    : 'bg-gray-100 text-gray-300'}`}>
                 {index < formData.currentStep ? <Check size={18} /> : step.icon}
               </div>
               <span className="text-sm hidden sm:block">{step.name}</span>
@@ -426,25 +424,15 @@ const QuestionnaireForm: React.FC = () => {
                           ? 'bg-accent/10 border border-accent/20' 
                           : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'}`}
                       onClick={() => {
-                        const currentGoals = [...formData.improvementGoals];
-                        if (currentGoals.includes(goal)) {
-                          updateField('improvementGoals', '', currentGoals.filter(g => g !== goal));
-                        } else {
-                          updateField('improvementGoals', '', [...currentGoals, goal]);
-                        }
+                        const updatedGoals = formData.improvementGoals.includes(goal)
+                          ? formData.improvementGoals.filter(g => g !== goal)
+                          : [...formData.improvementGoals, goal];
+                        updateField('improvementGoals', '', updatedGoals);
                       }}
                     >
                       <Checkbox
                         id={`goal-${goal}`}
                         checked={formData.improvementGoals.includes(goal)}
-                        onCheckedChange={() => {
-                          const currentGoals = [...formData.improvementGoals];
-                          if (currentGoals.includes(goal)) {
-                            updateField('improvementGoals', '', currentGoals.filter(g => g !== goal));
-                          } else {
-                            updateField('improvementGoals', '', [...currentGoals, goal]);
-                          }
-                        }}
                       />
                       <label
                         htmlFor={`goal-${goal}`}
