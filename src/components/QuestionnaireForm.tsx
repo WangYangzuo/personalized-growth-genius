@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -87,7 +86,7 @@ const QuestionnaireForm: React.FC = () => {
       case 2: // Time availability
         return true; // Time has default values
       case 3: // Improvement goals
-        return formData.improvementGoals.length > 0;
+        return formData.improvementGoals.some(goal => goal !== '');
       case 4: // Life objectives
         return formData.lifeObjectives.trim() !== '';
       default:
@@ -416,41 +415,38 @@ const QuestionnaireForm: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {improvementGoalOptions.map((goal) => (
-                    <div
-                      key={goal}
-                      className={`flex items-center space-x-3 p-3 rounded-lg transition-all cursor-pointer
-                        ${formData.improvementGoals.includes(goal) 
-                          ? 'bg-accent/10 border border-accent/20' 
-                          : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'}`}
-                      onClick={() => {
-                        const updatedGoals = formData.improvementGoals.includes(goal)
-                          ? formData.improvementGoals.filter(g => g !== goal)
-                          : [...formData.improvementGoals, goal];
-                        updateField('improvementGoals', '', updatedGoals);
-                      }}
-                    >
-                      <Checkbox
-                        id={`goal-${goal}`}
-                        checked={formData.improvementGoals.includes(goal)}
-                        onCheckedChange={(checked) => {
-                          const updatedGoals = checked
-                            ? [...formData.improvementGoals, goal]
-                            : formData.improvementGoals.filter(g => g !== goal);
+                  {[0, 1, 2, 3, 4].map((index) => (
+                    <div key={index} className="space-y-2">
+                      <Label htmlFor={`goal-${index}`} className="text-base font-medium">
+                        Improvement Goal {index + 1}
+                      </Label>
+                      <Select
+                        value={formData.improvementGoals[index] || ''}
+                        onValueChange={(value) => {
+                          const updatedGoals = [...formData.improvementGoals];
+                          updatedGoals[index] = value;
                           updateField('improvementGoals', '', updatedGoals);
                         }}
-                      />
-                      <label
-                        htmlFor={`goal-${goal}`}
-                        className="text-sm leading-tight cursor-pointer flex-1"
                       >
-                        {goal}
-                      </label>
+                        <SelectTrigger
+                          id={`goal-${index}`}
+                          className={`input-field ${showErrors && formData.improvementGoals.every(goal => !goal) ? 'border-red-500' : ''}`}
+                        >
+                          <SelectValue placeholder="Select an improvement goal" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {improvementGoalOptions.map((goal) => (
+                            <SelectItem key={goal} value={goal}>
+                              {goal}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   ))}
                 </div>
 
-                {showErrors && formData.improvementGoals.length === 0 && (
+                {showErrors && formData.improvementGoals.every(goal => !goal) && (
                   <p className="text-red-500 text-sm mt-2">
                     Please select at least one improvement goal
                   </p>
@@ -473,54 +469,4 @@ const QuestionnaireForm: React.FC = () => {
                     What are your main life objectives and aspirations?
                   </Label>
                   <Textarea
-                    id="life-objectives"
-                    value={formData.lifeObjectives}
-                    onChange={(e) => updateField('lifeObjectives', '', e.target.value)}
-                    placeholder="Describe your long-term vision, life goals, and what success means to you..."
-                    className={`min-h-[200px] input-field ${
-                      showErrors && formData.lifeObjectives.trim() === '' ? 'border-red-500' : ''
-                    }`}
-                  />
-                  {showErrors && formData.lifeObjectives.trim() === '' && (
-                    <p className="text-red-500 text-sm">
-                      Please share your life objectives
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Navigation buttons */}
-        <div className="flex justify-between mt-6">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={prevStep}
-            disabled={formData.currentStep === 0}
-            className="flex items-center space-x-2 px-5"
-          >
-            <ArrowLeft size={16} />
-            <span>Previous</span>
-          </Button>
-
-          <Button
-            type={formData.currentStep === steps.length - 1 ? 'submit' : 'button'}
-            onClick={handleNext}
-            className="floating-button bg-accent hover:bg-accent/90 text-white flex items-center space-x-2 px-5"
-          >
-            <span>{formData.currentStep === steps.length - 1 ? 'Generate Plan' : 'Next'}</span>
-            {formData.currentStep === steps.length - 1 ? (
-              <Check size={16} />
-            ) : (
-              <ArrowRight size={16} />
-            )}
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
-};
-
-export default QuestionnaireForm;
+                    id="life-object
