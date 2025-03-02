@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Define the types for our form state
@@ -118,7 +119,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             return {
               ...prev,
               [section]: {
-                ...sectionObj,
+                ...(typeof sectionObj === 'object' ? sectionObj : {}),
                 [parentField]: updatedParentObj
               }
             };
@@ -142,7 +143,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           return {
             ...prev,
             [section]: {
-              ...sectionObj,
+              ...(typeof sectionObj === 'object' ? sectionObj : {}),
               [field]: value
             }
           };
