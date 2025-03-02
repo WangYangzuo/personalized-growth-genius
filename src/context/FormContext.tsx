@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Define the types for our form state
@@ -104,14 +103,10 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (field.includes('.')) {
         const [parentField, childField] = field.split('.');
         
-        // Create a new object with the updated nested field
-        const updatedSection = {
-          ...prev[section as keyof typeof prev],
-        };
-        
         // Handle the nested update safely with type checking
-        if (typeof updatedSection === 'object' && updatedSection !== null) {
-          const parentObj = updatedSection[parentField as keyof typeof updatedSection];
+        const sectionObj = prev[section];
+        if (typeof sectionObj === 'object' && sectionObj !== null) {
+          const parentObj = sectionObj[parentField as keyof typeof sectionObj];
           if (typeof parentObj === 'object' && parentObj !== null) {
             // Create a new object for the parent field
             const updatedParentObj = {
@@ -123,7 +118,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             return {
               ...prev,
               [section]: {
-                ...updatedSection,
+                ...sectionObj,
                 [parentField]: updatedParentObj
               }
             };
