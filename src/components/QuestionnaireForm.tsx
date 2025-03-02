@@ -416,32 +416,38 @@ const QuestionnaireForm: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {improvementGoalOptions.map((goal) => (
-                    <div
-                      key={goal}
-                      className={`flex items-center space-x-3 p-3 rounded-lg transition-all cursor-pointer
-                        ${formData.improvementGoals.includes(goal) 
-                          ? 'bg-accent/10 border border-accent/20' 
-                          : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'}`}
-                      onClick={() => {
-                        const updatedGoals = formData.improvementGoals.includes(goal)
-                          ? formData.improvementGoals.filter(g => g !== goal)
-                          : [...formData.improvementGoals, goal];
-                        updateField('improvementGoals', '', updatedGoals);
-                      }}
-                    >
-                      <Checkbox
-                        id={`goal-${goal}`}
-                        checked={formData.improvementGoals.includes(goal)}
-                      />
-                      <label
-                        htmlFor={`goal-${goal}`}
-                        className="text-sm leading-tight cursor-pointer flex-1"
+                  {improvementGoalOptions.map((goal) => {
+                    const isChecked = formData.improvementGoals.includes(goal);
+                    return (
+                      <div
+                        key={goal}
+                        className={`flex items-center space-x-3 p-3 rounded-lg transition-all cursor-pointer
+                          ${isChecked 
+                            ? 'bg-accent/10 border border-accent/20' 
+                            : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'}`}
+                        onClick={() => {
+                          const updatedGoals = isChecked
+                            ? formData.improvementGoals.filter(g => g !== goal)
+                            : [...formData.improvementGoals, goal];
+                          updateField('improvementGoals', '', updatedGoals);
+                        }}
                       >
-                        {goal}
-                      </label>
-                    </div>
-                  ))}
+                        <Checkbox
+                          id={`goal-${goal}`}
+                          checked={isChecked}
+                          onCheckedChange={(checked) => {
+                            // Do nothing here - handling in the parent div's onClick
+                          }}
+                        />
+                        <label
+                          htmlFor={`goal-${goal}`}
+                          className="text-sm leading-tight cursor-pointer flex-1"
+                        >
+                          {goal}
+                        </label>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {showErrors && formData.improvementGoals.length === 0 && (
