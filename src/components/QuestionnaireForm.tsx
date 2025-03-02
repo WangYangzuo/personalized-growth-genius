@@ -469,4 +469,54 @@ const QuestionnaireForm: React.FC = () => {
                     What are your main life objectives and aspirations?
                   </Label>
                   <Textarea
-                    id="life-object
+                    id="life-object"
+                    value={formData.lifeObjectives}
+                    onChange={(e) => updateField('lifeObjectives', '', e.target.value)}
+                    placeholder="Describe your long-term vision, life goals, and what success means to you..."
+                    className={`min-h-[200px] input-field ${
+                      showErrors && formData.lifeObjectives.trim() === '' ? 'border-red-500' : ''
+                    }`}
+                  />
+                  {showErrors && formData.lifeObjectives.trim() === '' && (
+                    <p className="text-red-500 text-sm">
+                      Please share your life objectives
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Navigation buttons */}
+        <div className="flex justify-between mt-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={prevStep}
+            disabled={formData.currentStep === 0}
+            className="flex items-center space-x-2 px-5"
+          >
+            <ArrowLeft size={16} />
+            <span>Previous</span>
+          </Button>
+
+          <Button
+            type={formData.currentStep === steps.length - 1 ? 'submit' : 'button'}
+            onClick={handleNext}
+            className="floating-button bg-accent hover:bg-accent/90 text-white flex items-center space-x-2 px-5"
+          >
+            <span>{formData.currentStep === steps.length - 1 ? 'Generate Plan' : 'Next'}</span>
+            {formData.currentStep === steps.length - 1 ? (
+              <Check size={16} />
+            ) : (
+              <ArrowRight size={16} />
+            )}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default QuestionnaireForm;
