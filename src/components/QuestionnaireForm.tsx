@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -427,7 +428,7 @@ const QuestionnaireForm: React.FC = () => {
                             id={`goal-${goal}`}
                             checked={isChecked}
                             className="pointer-events-none"
-                            readOnly
+                            onCheckedChange={() => {}} // Add empty handler to avoid React warning
                           />
                         </div>
                         <label
