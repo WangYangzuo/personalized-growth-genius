@@ -432,13 +432,13 @@ const QuestionnaireForm: React.FC = () => {
                           updateField('improvementGoals', '', updatedGoals);
                         }}
                       >
-                        <Checkbox
-                          id={`goal-${goal}`}
-                          checked={isChecked}
-                          onCheckedChange={(checked) => {
-                            // Do nothing here - handling in the parent div's onClick
-                          }}
-                        />
+                        <div className="flex items-center h-4 w-4">
+                          <Checkbox
+                            id={`goal-${goal}`}
+                            checked={isChecked}
+                            className="pointer-events-none"
+                          />
+                        </div>
                         <label
                           htmlFor={`goal-${goal}`}
                           className="text-sm leading-tight cursor-pointer flex-1"
