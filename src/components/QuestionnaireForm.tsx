@@ -20,7 +20,6 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 
-// MBTI type options
 const mbtiTypes = [
   'INTJ', 'INTP', 'ENTJ', 'ENTP',
   'INFJ', 'INFP', 'ENFJ', 'ENFP',
@@ -28,7 +27,6 @@ const mbtiTypes = [
   'ISTP', 'ISFP', 'ESTP', 'ESFP'
 ];
 
-// Enneagram type options
 const enneagramTypes = [
   'Type 1 - The Perfectionist',
   'Type 2 - The Helper',
@@ -41,7 +39,6 @@ const enneagramTypes = [
   'Type 9 - The Peacemaker'
 ];
 
-// Improvement goals options
 const improvementGoalOptions = [
   'Improve productivity',
   'Enhance communication skills',
@@ -68,7 +65,6 @@ const QuestionnaireForm: React.FC = () => {
   const navigate = useNavigate();
   const [showErrors, setShowErrors] = useState(false);
 
-  // Labels for each step
   const steps = [
     { name: 'Personality', icon: <BrainCircuit size={18} /> },
     { name: 'Skills', icon: <Dumbbell size={18} /> },
@@ -77,7 +73,6 @@ const QuestionnaireForm: React.FC = () => {
     { name: 'Objectives', icon: <Compass size={18} /> }
   ];
 
-  // Form validation for each step
   const validateStep = (step: number) => {
     switch (step) {
       case 0: // Personality type
@@ -98,7 +93,6 @@ const QuestionnaireForm: React.FC = () => {
   const handleNext = () => {
     if (validateStep(formData.currentStep)) {
       if (formData.currentStep === steps.length - 1) {
-        // Submit form
         navigate('/results');
       } else {
         nextStep();
@@ -118,16 +112,22 @@ const QuestionnaireForm: React.FC = () => {
     }
   };
 
-  // Form step animations
   const formVariants = {
     hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: 20 }
   };
 
+  const handleGoalSelection = (goal: string) => {
+    const isChecked = formData.improvementGoals.includes(goal);
+    const updatedGoals = isChecked
+      ? formData.improvementGoals.filter(g => g !== goal)
+      : [...formData.improvementGoals, goal];
+    updateField('improvementGoals', '', updatedGoals);
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto">
-      {/* Progress indicators */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-2">
           {steps.map((step, index) => (
@@ -166,7 +166,6 @@ const QuestionnaireForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Form content */}
       <form onSubmit={handleSubmit} className="space-y-6">
         <AnimatePresence mode="wait">
           <motion.div
@@ -178,7 +177,6 @@ const QuestionnaireForm: React.FC = () => {
             transition={{ duration: 0.3 }}
             className="bg-white p-6 rounded-xl shadow-soft border border-gray-100"
           >
-            {/* Personality Type */}
             {formData.currentStep === 0 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
@@ -279,7 +277,6 @@ const QuestionnaireForm: React.FC = () => {
               </div>
             )}
 
-            {/* Skills Assessment */}
             {formData.currentStep === 1 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
@@ -325,7 +322,6 @@ const QuestionnaireForm: React.FC = () => {
               </div>
             )}
 
-            {/* Time Availability */}
             {formData.currentStep === 2 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
@@ -405,7 +401,6 @@ const QuestionnaireForm: React.FC = () => {
               </div>
             )}
 
-            {/* Improvement Goals */}
             {formData.currentStep === 3 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
@@ -425,18 +420,14 @@ const QuestionnaireForm: React.FC = () => {
                           ${isChecked 
                             ? 'bg-accent/10 border border-accent/20' 
                             : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'}`}
-                        onClick={() => {
-                          const updatedGoals = isChecked
-                            ? formData.improvementGoals.filter(g => g !== goal)
-                            : [...formData.improvementGoals, goal];
-                          updateField('improvementGoals', '', updatedGoals);
-                        }}
+                        onClick={() => handleGoalSelection(goal)}
                       >
                         <div className="flex items-center h-4 w-4">
                           <Checkbox
                             id={`goal-${goal}`}
                             checked={isChecked}
                             className="pointer-events-none"
+                            readOnly
                           />
                         </div>
                         <label
@@ -458,7 +449,6 @@ const QuestionnaireForm: React.FC = () => {
               </div>
             )}
 
-            {/* Life Objectives */}
             {formData.currentStep === 4 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
@@ -492,7 +482,6 @@ const QuestionnaireForm: React.FC = () => {
           </motion.div>
         </AnimatePresence>
 
-        {/* Navigation buttons */}
         <div className="flex justify-between mt-6">
           <Button
             type="button"
