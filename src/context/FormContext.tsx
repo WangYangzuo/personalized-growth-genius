@@ -111,7 +111,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           if (typeof parentObj === 'object' && parentObj !== null) {
             // Create a new object for the parent field
             const updatedParentObj = {
-              ...parentObj,
+              ...(typeof parentObj === 'object' && parentObj !== null ? parentObj : {}),
               [childField]: value
             };
             
@@ -119,7 +119,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             return {
               ...prev,
               [section]: {
-                ...(typeof sectionObj === 'object' ? sectionObj : {}),
+                ...(typeof sectionObj === 'object' && sectionObj !== null ? sectionObj : {}),
                 [parentField]: updatedParentObj
               }
             };
@@ -143,7 +143,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           return {
             ...prev,
             [section]: {
-              ...(typeof sectionObj === 'object' ? sectionObj : {}),
+              ...(typeof sectionObj === 'object' && sectionObj !== null ? sectionObj : {}),
               [field]: value
             }
           };
