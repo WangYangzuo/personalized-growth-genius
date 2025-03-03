@@ -4,11 +4,20 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import PersonalityTestLinks from '@/components/PersonalityTestLinks';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Index: React.FC = () => {
+  const { language, t } = useLanguage();
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <div className="w-full max-w-7xl mx-auto px-4 py-20 relative overflow-hidden">
+        {/* Language switcher */}
+        <div className="absolute top-4 right-4 z-10">
+          <LanguageSwitcher />
+        </div>
+        
         {/* Background elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-10 -right-10 w-80 h-80 bg-accent/5 rounded-full blur-3xl" />
@@ -24,10 +33,10 @@ const Index: React.FC = () => {
           className="relative text-center mb-16"
         >
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight mb-4">
-            个性化成长智慧
+            {t('home.title', '个性化成长智慧')}
           </h1>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-            发现你的独特自我提升之路，通过AI生成的个性化计划，根据你的性格类型、技能和人生目标量身定制。
+            {t('home.subtitle', '发现你的独特自我提升之路，通过AI生成的个性化计划，根据你的性格类型、技能和人生目标量身定制。')}
           </p>
         </motion.div>
         
@@ -46,7 +55,7 @@ const Index: React.FC = () => {
               transition={{ type: "spring", stiffness: 300 }}
             >
               <span className="flex items-center space-x-2">
-                <span>生成您的成长计划</span>
+                <span>{t('create.plan.button', '生成您的成长计划')}</span>
                 <motion.div
                   initial={{ x: 0 }}
                   animate={{ x: 5 }}
@@ -85,24 +94,24 @@ const Index: React.FC = () => {
           className="mt-24 relative"
         >
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-gray-800 mb-12">
-            如何操作
+            {t('how.it.works', '如何操作')}
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                title: "分享您的个人资料",
-                description: "告诉我们您的性格类型、技能和时间安排，帮助我们了解您的独特个人特点。",
+                title: t('share.profile', '分享您的个人资料'),
+                description: t('share.profile.desc', '告诉我们您的性格类型、技能和时间安排，帮助我们了解您的独特个人特点。'),
                 delay: 0
               },
               {
-                title: "确定您的目标",
-                description: "确定您想要提升的领域，分享您的长期人生目标和愿望。",
+                title: t('determine.goals', '确定您的目标'),
+                description: t('determine.goals.desc', '确定您想要提升的领域，分享您的长期人生目标和愿望。'),
                 delay: 0.15
               },
               {
-                title: "获取您的定制计划",
-                description: "接收专为您的性格、优势和提升目标量身定制的个性化成长计划。",
+                title: t('get.plan', '获取您的定制计划'),
+                description: t('get.plan.desc', '接收专为您的性格、优势和提升目标量身定制的个性化成长计划。'),
                 delay: 0.3
               }
             ].map((feature, index) => (

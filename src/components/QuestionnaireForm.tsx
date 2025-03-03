@@ -33,15 +33,15 @@ const mbtiTypes = [
 const getEnneagramTypes = (language: string) => {
   if (language === 'en') {
     return [
-      'Type 1 - Perfectionist',
-      'Type 2 - Helper',
-      'Type 3 - Achiever',
-      'Type 4 - Individualist',
-      'Type 5 - Investigator',
-      'Type 6 - Loyalist',
-      'Type 7 - Enthusiast',
-      'Type 8 - Challenger',
-      'Type 9 - Peacemaker'
+      'Type 1 - The Perfectionist',
+      'Type 2 - The Helper',
+      'Type 3 - The Achiever',
+      'Type 4 - The Individualist',
+      'Type 5 - The Investigator',
+      'Type 6 - The Loyalist',
+      'Type 7 - The Enthusiast',
+      'Type 8 - The Challenger',
+      'Type 9 - The Peacemaker'
     ];
   } else {
     return [
@@ -62,18 +62,18 @@ const getEnneagramTypes = (language: string) => {
 const getImprovementGoalOptions = (language: string) => {
   if (language === 'en') {
     return [
-      'Improve Productivity',
-      'Enhance Communication Skills',
-      'Develop Leadership Skills',
-      'Learn New Skills',
-      'Achieve Better Work-Life Balance',
-      'Boost Creativity',
-      'Manage Stress More Effectively',
-      'Foster Better Relationships',
-      'Advance Career Development',
-      'Improve Physical Health',
-      'Develop Emotional Intelligence',
-      'Enhance Problem-Solving Abilities'
+      'Improve productivity',
+      'Enhance communication skills',
+      'Develop leadership abilities',
+      'Learn a new skill',
+      'Achieve better work-life balance',
+      'Boost creativity',
+      'Manage stress more effectively',
+      'Foster better relationships',
+      'Advance career prospects',
+      'Improve physical health',
+      'Develop emotional intelligence',
+      'Enhance problem-solving abilities'
     ];
   } else {
     return [
@@ -90,25 +90,6 @@ const getImprovementGoalOptions = (language: string) => {
       '发展情商',
       '增强解决问题的能力'
     ];
-  }
-};
-
-// Skill name translations
-const getSkillName = (skill: string, language: string) => {
-  const skillName = skill.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase()).replace('Skills', '');
-  
-  if (language === 'en') {
-    return skillName.trim();
-  } else {
-    const skillTranslations: {[key: string]: string} = {
-      'Communication ': '沟通',
-      'Leadership ': '领导力',
-      'Problem Solving ': '解决问题',
-      'Creativity ': '创造力',
-      'Technical ': '技术',
-      'Emotional Intelligence ': '情商'
-    };
-    return skillTranslations[skillName] || skillName;
   }
 };
 
@@ -354,13 +335,12 @@ const QuestionnaireForm: React.FC = () => {
 
                 <div className="space-y-8">
                   {Object.keys(formData.skillsAssessment).map((skill) => {
-                    const translatedSkillName = getSkillName(skill, language);
-                    
+                    const skillName = skill.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase()).replace('Skills', '');
                     return (
                       <div key={skill} className="space-y-2">
                         <div className="flex justify-between items-center">
                           <Label htmlFor={`skill-${skill}`} className="text-base font-medium">
-                            {translatedSkillName}
+                            {language === 'en' ? skillName : getSkillName(skill, language)}
                           </Label>
                           <span className="text-sm text-gray-500">
                             {formData.skillsAssessment[skill as keyof typeof formData.skillsAssessment]}
@@ -592,6 +572,19 @@ const QuestionnaireForm: React.FC = () => {
       </form>
     </div>
   );
+};
+
+const getSkillName = (skill: string, language: string) => {
+  const skillTranslations: {[key: string]: string} = {
+    'communicationSkills': '沟通技能',
+    'leadershipSkills': '领导能力',
+    'problemSolvingSkills': '解决问题的能力',
+    'creativitySkills': '创造力',
+    'technicalSkills': '技术技能',
+    'emotionalIntelligenceSkills': '情商'
+  };
+  
+  return skillTranslations[skill] || skill;
 };
 
 export default QuestionnaireForm;

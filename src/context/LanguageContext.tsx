@@ -13,6 +13,47 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 // Translations dictionary
 const translations: Record<string, Record<Language, string>> = {
+  // Home page
+  'home.title': {
+    en: 'Personalized Growth Wisdom',
+    zh: '个性化成长智慧'
+  },
+  'home.subtitle': {
+    en: 'Discover your unique self-improvement path through AI-generated personalized plans based on your personality, skills, and life goals.',
+    zh: '发现你的独特自我提升之路，通过AI生成的个性化计划，根据你的性格类型、技能和人生目标量身定制。'
+  },
+  'create.plan.button': {
+    en: 'Create Your Growth Plan',
+    zh: '生成您的成长计划'
+  },
+  'how.it.works': {
+    en: 'How It Works',
+    zh: '如何操作'
+  },
+  'share.profile': {
+    en: 'Share Your Profile',
+    zh: '分享您的个人资料'
+  },
+  'share.profile.desc': {
+    en: 'Tell us about your personality type, skills, and time commitments to help us understand your unique personal traits.',
+    zh: '告诉我们您的性格类型、技能和时间安排，帮助我们了解您的独特个人特点。'
+  },
+  'determine.goals': {
+    en: 'Determine Your Goals',
+    zh: '确定您的目标'
+  },
+  'determine.goals.desc': {
+    en: 'Identify areas you want to improve and share your long-term life goals and aspirations.',
+    zh: '确定您想要提升的领域，分享您的长期人生目标和愿望。'
+  },
+  'get.plan': {
+    en: 'Get Your Custom Plan',
+    zh: '获取您的定制计划'
+  },
+  'get.plan.desc': {
+    en: 'Receive a personalized growth plan tailored to your personality, strengths, and improvement goals.',
+    zh: '接收专为您的性格、优势和提升目标量身定制的个性化成长计划。'
+  },
   // Navigation
   'back.home': {
     en: 'Back to Home',
