@@ -24,11 +24,10 @@ const Index: React.FC = () => {
           className="relative text-center mb-16"
         >
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight mb-4">
-            Personalized Growth Genius
+            个性化成长智慧
           </h1>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover your unique path to self-improvement with AI-generated plans 
-            tailored to your personality type, skills, and life goals.
+            发现你的独特自我提升之路，通过AI生成的个性化计划，根据你的性格类型、技能和人生目标量身定制。
           </p>
         </motion.div>
         
@@ -47,7 +46,7 @@ const Index: React.FC = () => {
               transition={{ type: "spring", stiffness: 300 }}
             >
               <span className="flex items-center space-x-2">
-                <span>Generate Your Growth Plan</span>
+                <span>生成您的成长计划</span>
                 <motion.div
                   initial={{ x: 0 }}
                   animate={{ x: 5 }}
@@ -86,24 +85,24 @@ const Index: React.FC = () => {
           className="mt-24 relative"
         >
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-gray-800 mb-12">
-            How It Works
+            如何操作
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                title: "Share Your Profile",
-                description: "Tell us about your personality type, skills, and time availability to help us understand your unique profile.",
+                title: "分享您的个人资料",
+                description: "告诉我们您的性格类型、技能和时间安排，帮助我们了解您的独特个人特点。",
                 delay: 0
               },
               {
-                title: "Define Your Goals",
-                description: "Identify what areas you want to improve and share your long-term life objectives and aspirations.",
+                title: "确定您的目标",
+                description: "确定您想要提升的领域，分享您的长期人生目标和愿望。",
                 delay: 0.15
               },
               {
-                title: "Get Your Custom Plan",
-                description: "Receive a personalized growth plan tailored specifically to your personality, strengths, and improvement goals.",
+                title: "获取您的定制计划",
+                description: "接收专为您的性格、优势和提升目标量身定制的个性化成长计划。",
                 delay: 0.3
               }
             ].map((feature, index) => (

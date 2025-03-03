@@ -33,8 +33,8 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
     document.body.removeChild(element);
 
     toast({
-      title: "Plan downloaded successfully",
-      description: `Saved as ${filename}`,
+      title: "计划成功下载",
+      description: `已保存为 ${filename}`,
     });
   };
 
@@ -42,8 +42,8 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
     navigator.clipboard.writeText(plan);
     setCopied(true);
     toast({
-      title: "Content copied to clipboard",
-      description: "You can now paste your growth plan anywhere",
+      title: "内容已复制到剪贴板",
+      description: "您现在可以将成长计划粘贴到任何地方",
     });
     
     setTimeout(() => setCopied(false), 2000);
@@ -81,7 +81,7 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
     >
       <div className="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
         <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50">
-          <h2 className="text-lg font-medium text-gray-800">Your Personalized Growth Plan</h2>
+          <h2 className="text-lg font-medium text-gray-800">您的个性化成长计划</h2>
           <div className="flex space-x-2">
             <Button
               size="sm"
@@ -90,7 +90,7 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
               onClick={handleCopy}
             >
               {copied ? <Check size={16} /> : <Copy size={16} />}
-              <span>{copied ? 'Copied' : 'Copy'}</span>
+              <span>{copied ? '已复制' : '复制'}</span>
             </Button>
             <Button
               size="sm"
@@ -98,7 +98,7 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
               onClick={handleDownload}
             >
               <Download size={16} />
-              <span>Download</span>
+              <span>下载</span>
             </Button>
           </div>
         </div>

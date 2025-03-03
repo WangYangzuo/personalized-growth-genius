@@ -54,7 +54,7 @@ const LoadingAnimation: React.FC = () => {
           repeat: Infinity
         }}
       >
-        Creating your personalized growth plan...
+        正在创建您的个性化成长计划...
       </motion.p>
     </div>
   );

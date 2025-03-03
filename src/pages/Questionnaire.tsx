@@ -21,7 +21,7 @@ const Questionnaire: React.FC = () => {
             className="inline-flex items-center text-gray-600 hover:text-accent transition-colors duration-200"
           >
             <ChevronLeft size={20} />
-            <span>Back to Home</span>
+            <span>返回首页</span>
           </Link>
         </motion.div>
         
@@ -33,10 +33,10 @@ const Questionnaire: React.FC = () => {
           className="text-center mb-12"
         >
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Create Your Personalized Growth Plan
+            创建您的个性化成长计划
           </h1>
           <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
-            Answer the questions below to help us generate a growth plan tailored to your unique profile
+            回答以下问题，帮助我们为您的独特个人资料生成量身定制的成长计划
           </p>
         </motion.div>
         

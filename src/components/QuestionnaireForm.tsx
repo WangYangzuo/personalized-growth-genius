@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -29,31 +30,31 @@ const mbtiTypes = [
 
 // Enneagram type options
 const enneagramTypes = [
-  'Type 1 - The Perfectionist',
-  'Type 2 - The Helper',
-  'Type 3 - The Achiever',
-  'Type 4 - The Individualist',
-  'Type 5 - The Investigator',
-  'Type 6 - The Loyalist',
-  'Type 7 - The Enthusiast',
-  'Type 8 - The Challenger',
-  'Type 9 - The Peacemaker'
+  'Type 1 - 完美主义者',
+  'Type 2 - 助人者',
+  'Type 3 - 成就者',
+  'Type 4 - 个人主义者',
+  'Type 5 - 研究者',
+  'Type 6 - 忠诚者',
+  'Type 7 - 活跃者',
+  'Type 8 - 挑战者',
+  'Type 9 - 和平者'
 ];
 
 // Improvement goals options
 const improvementGoalOptions = [
-  'Improve productivity',
-  'Enhance communication skills',
-  'Develop leadership abilities',
-  'Learn a new skill',
-  'Achieve better work-life balance',
-  'Boost creativity',
-  'Manage stress more effectively',
-  'Foster better relationships',
-  'Advance career prospects',
-  'Improve physical health',
-  'Develop emotional intelligence',
-  'Enhance problem-solving abilities'
+  '提高生产力',
+  '增强沟通技巧',
+  '发展领导能力',
+  '学习新技能',
+  '实现更好的工作生活平衡',
+  '提升创造力',
+  '更有效地管理压力',
+  '培养更好的人际关系',
+  '促进职业发展',
+  '改善身体健康',
+  '发展情商',
+  '增强解决问题的能力'
 ];
 
 const QuestionnaireForm: React.FC = () => {
@@ -69,11 +70,11 @@ const QuestionnaireForm: React.FC = () => {
 
   // Labels for each step
   const steps = [
-    { name: 'Personality', icon: <BrainCircuit size={18} /> },
-    { name: 'Skills', icon: <Dumbbell size={18} /> },
-    { name: 'Time', icon: <Clock size={18} /> },
-    { name: 'Goals', icon: <Target size={18} /> },
-    { name: 'Objectives', icon: <Compass size={18} /> }
+    { name: '性格', icon: <BrainCircuit size={18} /> },
+    { name: '技能', icon: <Dumbbell size={18} /> },
+    { name: '时间', icon: <Clock size={18} /> },
+    { name: '目标', icon: <Target size={18} /> },
+    { name: '愿景', icon: <Compass size={18} /> }
   ];
 
   // Form validation for each step
@@ -181,15 +182,15 @@ const QuestionnaireForm: React.FC = () => {
             {formData.currentStep === 0 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-semibold text-gray-800">Your Personality Type</h2>
+                  <h2 className="text-2xl font-semibold text-gray-800">您的性格类型</h2>
                   <p className="text-gray-500 mt-1">
-                    Share your personality type results to receive tailored recommendations
+                    分享您的性格类型测试结果以获取量身定制的建议
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="mbti">MBTI Type</Label>
+                    <Label htmlFor="mbti">MBTI类型</Label>
                     <Select
                       value={formData.personalityType.mbti}
                       onValueChange={(value) => 
@@ -200,7 +201,7 @@ const QuestionnaireForm: React.FC = () => {
                         id="mbti"
                         className={`input-field ${showErrors && formData.personalityType.mbti === '' && formData.personalityType.enneagram === '' ? 'border-red-500' : ''}`}
                       >
-                        <SelectValue placeholder="Select your MBTI type" />
+                        <SelectValue placeholder="选择您的MBTI类型" />
                       </SelectTrigger>
                       <SelectContent>
                         {mbtiTypes.map((type) => (
@@ -213,7 +214,7 @@ const QuestionnaireForm: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="enneagram">Enneagram Type</Label>
+                    <Label htmlFor="enneagram">九型人格</Label>
                     <Select
                       value={formData.personalityType.enneagram}
                       onValueChange={(value) => 
@@ -224,7 +225,7 @@ const QuestionnaireForm: React.FC = () => {
                         id="enneagram"
                         className={`input-field ${showErrors && formData.personalityType.mbti === '' && formData.personalityType.enneagram === '' ? 'border-red-500' : ''}`}
                       >
-                        <SelectValue placeholder="Select your Enneagram type" />
+                        <SelectValue placeholder="选择您的九型人格" />
                       </SelectTrigger>
                       <SelectContent>
                         {enneagramTypes.map((type) => (
@@ -238,9 +239,9 @@ const QuestionnaireForm: React.FC = () => {
                 </div>
 
                 <div className="space-y-4 mt-8">
-                  <h3 className="text-lg font-medium text-gray-700">Jungian Cognitive Functions</h3>
+                  <h3 className="text-lg font-medium text-gray-700">荣格认知功能</h3>
                   <p className="text-sm text-gray-500">
-                    Rate your strength in each cognitive function (0-10)
+                    评估您在每种认知功能中的强度（0-10）
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -272,7 +273,7 @@ const QuestionnaireForm: React.FC = () => {
 
                 {showErrors && formData.personalityType.mbti === '' && formData.personalityType.enneagram === '' && (
                   <p className="text-red-500 text-sm mt-2">
-                    Please provide at least one personality type (MBTI or Enneagram)
+                    请提供至少一种性格类型（MBTI或九型人格）
                   </p>
                 )}
               </div>
@@ -282,20 +283,30 @@ const QuestionnaireForm: React.FC = () => {
             {formData.currentStep === 1 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-semibold text-gray-800">Skills Assessment</h2>
+                  <h2 className="text-2xl font-semibold text-gray-800">技能评估</h2>
                   <p className="text-gray-500 mt-1">
-                    Rate your current skill levels to help tailor your growth plan
+                    评估您当前的技能水平，以帮助定制您的成长计划
                   </p>
                 </div>
 
                 <div className="space-y-8">
                   {Object.keys(formData.skillsAssessment).map((skill) => {
                     const skillName = skill.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase()).replace('Skills', '');
+                    const skillTranslations: {[key: string]: string} = {
+                      'Communication ': '沟通',
+                      'Leadership ': '领导力',
+                      'Problem Solving ': '解决问题',
+                      'Creativity ': '创造力',
+                      'Technical ': '技术',
+                      'Emotional Intelligence ': '情商'
+                    };
+                    const translatedSkillName = skillTranslations[skillName] || skillName;
+                    
                     return (
                       <div key={skill} className="space-y-2">
                         <div className="flex justify-between items-center">
                           <Label htmlFor={`skill-${skill}`} className="text-base font-medium">
-                            {skillName}
+                            {translatedSkillName}
                           </Label>
                           <span className="text-sm text-gray-500">
                             {formData.skillsAssessment[skill as keyof typeof formData.skillsAssessment]}
@@ -313,9 +324,9 @@ const QuestionnaireForm: React.FC = () => {
                           className="py-2"
                         />
                         <div className="flex justify-between text-xs text-gray-400">
-                          <span>Beginner</span>
-                          <span>Intermediate</span>
-                          <span>Expert</span>
+                          <span>初学者</span>
+                          <span>中级</span>
+                          <span>专家</span>
                         </div>
                       </div>
                     );
@@ -328,16 +339,16 @@ const QuestionnaireForm: React.FC = () => {
             {formData.currentStep === 2 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-semibold text-gray-800">Time Availability</h2>
+                  <h2 className="text-2xl font-semibold text-gray-800">时间安排</h2>
                   <p className="text-gray-500 mt-1">
-                    Let us know how much time you can dedicate to personal growth
+                    让我们了解您可以投入多少时间用于个人成长
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <Label htmlFor="weekday-hours" className="text-base font-medium">
-                      Weekday Hours (per day)
+                      工作日时间（每天）
                     </Label>
                     <div className="flex items-center space-x-4">
                       <Slider
@@ -352,14 +363,14 @@ const QuestionnaireForm: React.FC = () => {
                         className="flex-grow"
                       />
                       <span className="text-gray-700 font-medium min-w-[40px]">
-                        {formData.freeTimeAvailability.weekdayHours} hrs
+                        {formData.freeTimeAvailability.weekdayHours} 小时
                       </span>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     <Label htmlFor="weekend-hours" className="text-base font-medium">
-                      Weekend Hours (per day)
+                      周末时间（每天）
                     </Label>
                     <div className="flex items-center space-x-4">
                       <Slider
@@ -374,7 +385,7 @@ const QuestionnaireForm: React.FC = () => {
                         className="flex-grow"
                       />
                       <span className="text-gray-700 font-medium min-w-[40px]">
-                        {formData.freeTimeAvailability.weekendHours} hrs
+                        {formData.freeTimeAvailability.weekendHours} 小时
                       </span>
                     </div>
                   </div>
@@ -382,7 +393,7 @@ const QuestionnaireForm: React.FC = () => {
 
                 <div className="mt-8 space-y-3">
                   <Label htmlFor="preferred-time" className="text-base font-medium">
-                    Preferred Time of Day
+                    首选时间段
                   </Label>
                   <Select
                     value={formData.freeTimeAvailability.preferredTimeOfDay}
@@ -391,13 +402,13 @@ const QuestionnaireForm: React.FC = () => {
                     }
                   >
                     <SelectTrigger id="preferred-time" className="input-field">
-                      <SelectValue placeholder="Select preferred time" />
+                      <SelectValue placeholder="选择首选时间" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="morning">Morning (5am - 11am)</SelectItem>
-                      <SelectItem value="afternoon">Afternoon (11am - 5pm)</SelectItem>
-                      <SelectItem value="evening">Evening (5pm - 10pm)</SelectItem>
-                      <SelectItem value="night">Night (10pm - 5am)</SelectItem>
+                      <SelectItem value="morning">早晨 (5am - 11am)</SelectItem>
+                      <SelectItem value="afternoon">下午 (11am - 5pm)</SelectItem>
+                      <SelectItem value="evening">傍晚 (5pm - 10pm)</SelectItem>
+                      <SelectItem value="night">夜晚 (10pm - 5am)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -408,9 +419,9 @@ const QuestionnaireForm: React.FC = () => {
             {formData.currentStep === 3 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-semibold text-gray-800">Improvement Goals</h2>
+                  <h2 className="text-2xl font-semibold text-gray-800">提升目标</h2>
                   <p className="text-gray-500 mt-1">
-                    Select the areas you'd like to focus on improving
+                    选择您想要重点提升的领域
                   </p>
                 </div>
 
@@ -418,7 +429,7 @@ const QuestionnaireForm: React.FC = () => {
                   {[0, 1, 2, 3, 4].map((index) => (
                     <div key={index} className="space-y-2">
                       <Label htmlFor={`goal-${index}`} className="text-base font-medium">
-                        Improvement Goal {index + 1}
+                        提升目标 {index + 1}
                       </Label>
                       <Select
                         value={formData.improvementGoals[index] || ''}
@@ -432,7 +443,7 @@ const QuestionnaireForm: React.FC = () => {
                           id={`goal-${index}`}
                           className={`input-field ${showErrors && formData.improvementGoals.every(goal => !goal) ? 'border-red-500' : ''}`}
                         >
-                          <SelectValue placeholder="Select an improvement goal" />
+                          <SelectValue placeholder="选择一个提升目标" />
                         </SelectTrigger>
                         <SelectContent>
                           {improvementGoalOptions.map((goal) => (
@@ -448,7 +459,7 @@ const QuestionnaireForm: React.FC = () => {
 
                 {showErrors && formData.improvementGoals.every(goal => !goal) && (
                   <p className="text-red-500 text-sm mt-2">
-                    Please select at least one improvement goal
+                    请至少选择一个提升目标
                   </p>
                 )}
               </div>
@@ -458,28 +469,28 @@ const QuestionnaireForm: React.FC = () => {
             {formData.currentStep === 4 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-semibold text-gray-800">Life Objectives</h2>
+                  <h2 className="text-2xl font-semibold text-gray-800">人生目标</h2>
                   <p className="text-gray-500 mt-1">
-                    Share your long-term aspirations and life vision
+                    分享您的长期愿望和人生愿景
                   </p>
                 </div>
 
                 <div className="space-y-3">
                   <Label htmlFor="life-objectives" className="text-base font-medium">
-                    What are your main life objectives and aspirations?
+                    您的主要人生目标和愿望是什么？
                   </Label>
                   <Textarea
                     id="life-object"
                     value={formData.lifeObjectives}
                     onChange={(e) => updateField('lifeObjectives', '', e.target.value)}
-                    placeholder="Describe your long-term vision, life goals, and what success means to you..."
+                    placeholder="描述您的长期愿景、人生目标，以及成功对您意味着什么..."
                     className={`min-h-[200px] input-field ${
                       showErrors && formData.lifeObjectives.trim() === '' ? 'border-red-500' : ''
                     }`}
                   />
                   {showErrors && formData.lifeObjectives.trim() === '' && (
                     <p className="text-red-500 text-sm">
-                      Please share your life objectives
+                      请分享您的人生目标
                     </p>
                   )}
                 </div>
@@ -498,7 +509,7 @@ const QuestionnaireForm: React.FC = () => {
             className="flex items-center space-x-2 px-5"
           >
             <ArrowLeft size={16} />
-            <span>Previous</span>
+            <span>上一步</span>
           </Button>
 
           <Button
@@ -506,7 +517,7 @@ const QuestionnaireForm: React.FC = () => {
             onClick={handleNext}
             className="floating-button bg-accent hover:bg-accent/90 text-white flex items-center space-x-2 px-5"
           >
-            <span>{formData.currentStep === steps.length - 1 ? 'Generate Plan' : 'Next'}</span>
+            <span>{formData.currentStep === steps.length - 1 ? '生成计划' : '下一步'}</span>
             {formData.currentStep === steps.length - 1 ? (
               <Check size={16} />
             ) : (
