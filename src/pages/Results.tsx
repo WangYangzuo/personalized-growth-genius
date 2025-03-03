@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import PlanDocument from '@/components/PlanDocument';
 import { useFormContext } from '@/context/FormContext';
@@ -18,20 +20,16 @@ const Results: React.FC = () => {
   const [apiKey, setApiKey] = useState('');
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
 
-  // Ensure user came from the questionnaire
   useEffect(() => {
-    // Redirect if form is empty (user didn't fill the questionnaire)
     if (!formData.personalityType.mbti && !formData.personalityType.enneagram && !formData.lifeObjectives) {
       navigate('/questionnaire');
     } else {
-      // 检查是否已存储API密钥
       const savedApiKey = localStorage.getItem('deepseek_api_key');
       if (savedApiKey) {
         setApiKey(savedApiKey);
         generatePlanWithAPI(savedApiKey);
       } else {
         setShowApiKeyInput(true);
-        // 仍然生成模拟数据作为备用
         setTimeout(() => {
           setGeneratedPlan(generateMockPlan());
           setLoading(false);
@@ -58,10 +56,8 @@ const Results: React.FC = () => {
 
   const generatePlanWithAPI = async (key: string) => {
     try {
-      // 准备发送到API的数据
       const { personalityType, skillsAssessment, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
       
-      // 构建提示词
       const prompt = `
         创建一个个性化成长计划，基于以下用户资料：
         
@@ -94,7 +90,6 @@ const Results: React.FC = () => {
       
       console.log("Sending request to DeepSeek API...");
       
-      // DeepSeek API调用
       const response = await fetch('https://api.deepseek.com/chat/completions', {
         method: 'POST',
         headers: {
@@ -118,7 +113,6 @@ const Results: React.FC = () => {
       const data = await response.json();
       console.log("API response:", data);
       
-      // 提取API返回的内容
       const planContent = data.choices[0].message.content;
       setGeneratedPlan(planContent);
       setLoading(false);
@@ -133,18 +127,14 @@ const Results: React.FC = () => {
         variant: "destructive",
       });
       
-      // 使用模拟数据作为备用
       setGeneratedPlan(generateMockPlan());
       setLoading(false);
     }
   };
 
-  // 模拟计划生成器 - 在真实应用中，这将调用API
   const generateMockPlan = () => {
-    // This is a mock plan generator - in a real app, this would call an API with an LLM
     const { personalityType, skillsAssessment, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
     
-    // Determine personality insights based on MBTI or Enneagram
     let personalityInsights = '';
     if (personalityType.mbti) {
       const isIntrovert = personalityType.mbti.startsWith('I');
@@ -167,17 +157,14 @@ const Results: React.FC = () => {
       }
     }
     
-    // Determine focus areas based on skills assessment
     const skillsArray = Object.entries(skillsAssessment);
     const lowestSkills = skillsArray.sort((a, b) => a[1] - b[1]).slice(0, 2);
     const highestSkills = skillsArray.sort((a, b) => b[1] - a[1]).slice(0, 2);
     
-    // Create a time-based schedule
     const timeFraming = freeTimeAvailability.weekdayHours >= 3 
       ? "您每天有足够的时间用于发展。" 
       : "由于工作日时间有限，请专注于高影响力、短时间的活动。";
     
-    // Create the plan content - now in Chinese
     return `# 您的个性化成长计划
 
 ## 个人资料摘要
@@ -295,7 +282,6 @@ ${lifeObjectives.slice(0, 150)}...
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-8 px-4">
       <div className="w-full max-w-7xl mx-auto">
-        {/* Header with back button */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -311,7 +297,6 @@ ${lifeObjectives.slice(0, 150)}...
           </Link>
         </motion.div>
         
-        {/* Page title */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -328,7 +313,6 @@ ${lifeObjectives.slice(0, 150)}...
           </p>
         </motion.div>
         
-        {/* API Key Input */}
         {showApiKeyInput && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -365,7 +349,6 @@ ${lifeObjectives.slice(0, 150)}...
           </motion.div>
         )}
         
-        {/* Loading or results */}
         {loading ? (
           <motion.div
             initial={{ opacity: 0 }}
