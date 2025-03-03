@@ -40,16 +40,16 @@ const Index: React.FC = () => {
           </p>
         </motion.div>
         
-        {/* Main CTA button */}
+        {/* Main CTA button - 修改按钮，确保在移动设备上也能正常工作 */}
         <motion.div 
           className="relative flex justify-center my-16"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <Link to="/questionnaire">
+          <Link to="/questionnaire" className="w-auto">
             <motion.button 
-              className="floating-button group bg-accent hover:bg-accent/90 text-white px-8 py-4 rounded-full text-lg font-medium shadow-button"
+              className="floating-button group bg-accent hover:bg-accent/90 text-white px-8 py-4 rounded-full text-lg font-medium shadow-button flex items-center"
               whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)" }}
               whileTap={{ y: 0, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 300 }}

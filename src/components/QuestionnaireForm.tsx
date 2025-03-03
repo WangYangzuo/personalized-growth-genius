@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -283,7 +282,7 @@ const QuestionnaireForm: React.FC = () => {
                 <div className="space-y-4 mt-8">
                   <h3 className="text-lg font-medium text-gray-700">{t('jungian.functions', '荣格认知功能')}</h3>
                   <p className="text-sm text-gray-500">
-                    {t('assess.functions', '评估您在每种认知功能中的强度（0-10）')}
+                    {t('assess.functions', '评估您在每种认知功能中的强度（0-50）')}
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -300,7 +299,7 @@ const QuestionnaireForm: React.FC = () => {
                         <Slider
                           id={`function-${fn}`}
                           min={0}
-                          max={10}
+                          max={50}
                           step={1}
                           value={[formData.personalityType.jungianFunctions[fn as keyof typeof formData.personalityType.jungianFunctions]]}
                           onValueChange={(value) => 

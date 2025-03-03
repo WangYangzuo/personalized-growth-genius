@@ -6,12 +6,17 @@ import { Button } from '@/components/ui/button';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import PlanDocument from '@/components/PlanDocument';
 import { useFormContext } from '@/context/FormContext';
+import { useLanguage } from '@/context/LanguageContext';
+import { toast } from "@/components/ui/use-toast";
 
 const Results: React.FC = () => {
   const { formData } = useFormContext();
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [generatedPlan, setGeneratedPlan] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
 
   // Ensure user came from the questionnaire
   useEffect(() => {
@@ -19,16 +24,122 @@ const Results: React.FC = () => {
     if (!formData.personalityType.mbti && !formData.personalityType.enneagram && !formData.lifeObjectives) {
       navigate('/questionnaire');
     } else {
-      // Simulate AI generation time
-      const timer = setTimeout(() => {
-        setGeneratedPlan(generateMockPlan());
-        setLoading(false);
-      }, 3000);
-      
-      return () => clearTimeout(timer);
+      // 检查是否已存储API密钥
+      const savedApiKey = localStorage.getItem('deepseek_api_key');
+      if (savedApiKey) {
+        setApiKey(savedApiKey);
+        generatePlanWithAPI(savedApiKey);
+      } else {
+        setShowApiKeyInput(true);
+        // 仍然生成模拟数据作为备用
+        setTimeout(() => {
+          setGeneratedPlan(generateMockPlan());
+          setLoading(false);
+        }, 3000);
+      }
     }
   }, [formData, navigate]);
 
+  const handleApiKeySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (apiKey.trim()) {
+      localStorage.setItem('deepseek_api_key', apiKey);
+      setShowApiKeyInput(false);
+      setLoading(true);
+      generatePlanWithAPI(apiKey);
+    } else {
+      toast({
+        title: language === 'en' ? "API Key Required" : "需要API密钥",
+        description: language === 'en' ? "Please enter your DeepSeek API key" : "请输入您的DeepSeek API密钥",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const generatePlanWithAPI = async (key: string) => {
+    try {
+      // 准备发送到API的数据
+      const { personalityType, skillsAssessment, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
+      
+      // 构建提示词
+      const prompt = `
+        创建一个个性化成长计划，基于以下用户资料：
+        
+        ${personalityType.mbti ? `MBTI类型: ${personalityType.mbti}` : ''}
+        ${personalityType.enneagram ? `九型人格: ${personalityType.enneagram}` : ''}
+        
+        技能评估:
+        ${Object.entries(skillsAssessment).map(([skill, level]) => `- ${skill.replace(/([A-Z])/g, ' $1').trim().replace('Skills', '')}: ${level}/10`).join('\n')}
+        
+        时间可用性:
+        - 工作日: 每天${freeTimeAvailability.weekdayHours}小时
+        - 周末: 每天${freeTimeAvailability.weekendHours}小时
+        - 首选时间段: ${freeTimeAvailability.preferredTimeOfDay}
+        
+        改进目标:
+        ${improvementGoals.filter(Boolean).map(goal => `- ${goal}`).join('\n')}
+        
+        人生目标:
+        ${lifeObjectives}
+        
+        请以Markdown格式返回一个全面的个性化成长计划，包括：
+        1. 个人概况分析
+        2. 成长策略概述
+        3. 每周时间安排建议
+        4. 每日实践建议
+        5. 为期三个月的进步路线图
+        6. 推荐资源
+        7. 进度追踪方法
+      `;
+      
+      console.log("Sending request to DeepSeek API...");
+      
+      // DeepSeek API调用
+      const response = await fetch('https://api.deepseek.com/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [
+            { role: "system", content: "你是一个个人成长顾问，专注于帮助用户根据他们的性格、技能和目标创建个性化的成长计划。" },
+            { role: "user", content: prompt }
+          ],
+          stream: false
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API错误: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log("API response:", data);
+      
+      // 提取API返回的内容
+      const planContent = data.choices[0].message.content;
+      setGeneratedPlan(planContent);
+      setLoading(false);
+      
+    } catch (error) {
+      console.error("API调用失败:", error);
+      toast({
+        title: language === 'en' ? "Error" : "错误",
+        description: language === 'en' 
+          ? "Failed to generate plan with API. Using mock data instead." 
+          : "无法使用API生成计划。使用模拟数据替代。",
+        variant: "destructive",
+      });
+      
+      // 使用模拟数据作为备用
+      setGeneratedPlan(generateMockPlan());
+      setLoading(false);
+    }
+  };
+
+  // 模拟计划生成器 - 在真实应用中，这将调用API
   const generateMockPlan = () => {
     // This is a mock plan generator - in a real app, this would call an API with an LLM
     const { personalityType, skillsAssessment, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
@@ -196,7 +307,7 @@ ${lifeObjectives.slice(0, 150)}...
             className="inline-flex items-center text-gray-600 hover:text-accent transition-colors duration-200"
           >
             <ChevronLeft size={20} />
-            <span>返回问卷</span>
+            <span>{language === 'en' ? 'Back to Questionnaire' : '返回问卷'}</span>
           </Link>
         </motion.div>
         
@@ -208,14 +319,51 @@ ${lifeObjectives.slice(0, 150)}...
           className="text-center mb-12"
         >
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-            您的成长计划
+            {language === 'en' ? 'Your Growth Plan' : '您的成长计划'}
           </h1>
           <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
             {loading 
-              ? "我们正在根据您的输入创建个性化成长计划..."
-              : "您的AI生成计划已准备就绪！下载或复制以下内容。"}
+              ? (language === 'en' ? "We're creating your personalized growth plan based on your input..." : "我们正在根据您的输入创建个性化成长计划...")
+              : (language === 'en' ? "Your AI-generated plan is ready! Download or copy the content below." : "您的AI生成计划已准备就绪！下载或复制以下内容。")}
           </p>
         </motion.div>
+        
+        {/* API Key Input */}
+        {showApiKeyInput && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white p-6 rounded-xl shadow-soft border border-gray-100 max-w-md mx-auto mb-8"
+          >
+            <h2 className="text-xl font-semibold mb-4">
+              {language === 'en' ? 'Enter DeepSeek API Key' : '输入DeepSeek API密钥'}
+            </h2>
+            <p className="text-sm text-gray-500 mb-4">
+              {language === 'en' 
+                ? "To generate a personalized plan with AI, enter your DeepSeek API key. Your key will be stored locally." 
+                : "要使用AI生成个性化计划，请输入您的DeepSeek API密钥。您的密钥将存储在本地。"}
+            </p>
+            <form onSubmit={handleApiKeySubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="api-key">
+                  {language === 'en' ? 'DeepSeek API Key' : 'DeepSeek API密钥'}
+                </Label>
+                <Input
+                  id="api-key"
+                  type="password"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  placeholder={language === 'en' ? "Enter your API key" : "输入您的API密钥"}
+                  className="mt-1 w-full"
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                {language === 'en' ? 'Generate with DeepSeek AI' : '使用DeepSeek AI生成'}
+              </Button>
+            </form>
+          </motion.div>
+        )}
         
         {/* Loading or results */}
         {loading ? (
@@ -243,7 +391,7 @@ ${lifeObjectives.slice(0, 150)}...
               >
                 <Link to="/">
                   <Home size={18} className="mr-2" />
-                  返回首页
+                  {language === 'en' ? 'Back to Home' : '返回首页'}
                 </Link>
               </Button>
             </motion.div>
