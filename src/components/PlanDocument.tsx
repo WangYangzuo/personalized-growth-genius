@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -37,24 +38,36 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
   const [exportFormat, setExportFormat] = useState<'svg' | 'html'>('svg');
   const markmapInstance = useRef<Markmap | null>(null);
 
-  // Initialize mindmap when dialog opens
+  // Initialize mindmap when dialog opens and whenever it becomes visible
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    
     if (mindmapOpen && mindmapRef.current) {
-      const transformer = new Transformer();
-      const { root } = transformer.transform(plan);
-      
       // Clear previous mindmap if exists
       if (mindmapRef.current) {
         mindmapRef.current.innerHTML = '';
       }
       
-      // Create new mindmap
-      setTimeout(() => {
+      // Delayed initialization to ensure the container is properly rendered
+      timer = setTimeout(() => {
         if (mindmapRef.current) {
-          markmapInstance.current = Markmap.create(mindmapRef.current, undefined, root);
+          try {
+            const transformer = new Transformer();
+            const { root } = transformer.transform(plan);
+            markmapInstance.current = Markmap.create(mindmapRef.current, {
+              autoFit: true, // Automatically fit content to view
+              zoom: true,    // Enable zoom
+            }, root);
+          } catch (error) {
+            console.error("Error creating mindmap:", error);
+          }
         }
-      }, 100);
+      }, 300); // Increased timeout to ensure DOM is ready
     }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [mindmapOpen, plan]);
 
   const handleDownload = () => {
@@ -92,14 +105,35 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
   };
 
   const handleMindmapExport = () => {
-    if (!markmapInstance.current) return;
+    if (!markmapInstance.current || !mindmapRef.current) {
+      toast({
+        title: language === 'en' ? "Export failed" : "导出失败",
+        description: language === 'en' ? "Could not generate mindmap" : "无法生成思维导图",
+        variant: "destructive",
+      });
+      return;
+    }
     
     if (exportFormat === 'svg') {
       // Export as SVG
-      const svgEl = mindmapRef.current?.querySelector('svg');
-      if (!svgEl) return;
+      const svgEl = mindmapRef.current.querySelector('svg');
+      if (!svgEl) {
+        toast({
+          title: language === 'en' ? "Export failed" : "导出失败",
+          description: language === 'en' ? "SVG element not found" : "找不到SVG元素",
+          variant: "destructive",
+        });
+        return;
+      }
       
-      const svgData = new XMLSerializer().serializeToString(svgEl);
+      // Clone the SVG to avoid modifying the displayed one
+      const clonedSvg = svgEl.cloneNode(true) as SVGElement;
+      
+      // Set width and height to ensure proper export
+      clonedSvg.setAttribute('width', svgEl.getBoundingClientRect().width.toString());
+      clonedSvg.setAttribute('height', svgEl.getBoundingClientRect().height.toString());
+      
+      const svgData = new XMLSerializer().serializeToString(clonedSvg);
       const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
       const svgUrl = URL.createObjectURL(svgBlob);
       
@@ -109,6 +143,9 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
+      
+      // Clean up
+      URL.revokeObjectURL(svgUrl);
     } else {
       // Export as HTML
       const htmlContent = `
@@ -119,23 +156,40 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Growth Plan Mindmap</title>
           <script src="https://cdn.jsdelivr.net/npm/d3@6"></script>
-          <script src="https://cdn.jsdelivr.net/npm/markmap-view"></script>
+          <script src="https://cdn.jsdelivr.net/npm/markmap-view@0.18.10"></script>
+          <script src="https://cdn.jsdelivr.net/npm/markmap-lib@0.18.11"></script>
           <style>
-            body { margin: 0; }
+            body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; }
             #mindmap { height: 100vh; width: 100vw; }
+            .controls { position: fixed; top: 10px; right: 10px; background: white; padding: 10px; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            button { padding: 5px 10px; background: #4a86e8; color: white; border: none; border-radius: 4px; cursor: pointer; }
+            button:hover { background: #3a76d8; }
           </style>
         </head>
         <body>
           <div id="mindmap"></div>
+          <div class="controls">
+            <button onclick="mm.fit()">Fit to Screen</button>
+            <button onclick="mm.rescale(1.2)">Zoom In</button>
+            <button onclick="mm.rescale(0.8)">Zoom Out</button>
+          </div>
           <script>
             // Embedding the markdown content
             const markdown = ${JSON.stringify(plan)};
-            // Load markmap
-            const { Transformer } = window.markmapLib;
-            const { Markmap } = window.markmap;
-            const transformer = new Transformer();
-            const { root } = transformer.transform(markdown);
-            const mm = Markmap.create('#mindmap', null, root);
+            
+            // Wait for scripts to load
+            window.addEventListener('load', () => {
+              // Load markmap
+              const { Transformer } = window.markmapLib;
+              const { Markmap } = window.markmap;
+              
+              const transformer = new Transformer();
+              const { root } = transformer.transform(markdown);
+              const mm = Markmap.create('#mindmap', { autoFit: true, zoom: true }, root);
+              
+              // Expose mm to global for controls
+              window.mm = mm;
+            });
           </script>
         </body>
         </html>
@@ -150,6 +204,9 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
+      
+      // Clean up
+      URL.revokeObjectURL(htmlUrl);
     }
     
     toast({
@@ -220,6 +277,11 @@ const PlanDocument: React.FC<PlanDocumentProps> = ({ plan }) => {
               <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh]">
                 <DialogHeader>
                   <DialogTitle>{language === 'en' ? 'Plan Mindmap' : '计划思维导图'}</DialogTitle>
+                  <DialogDescription>
+                    {language === 'en' 
+                      ? 'Visualize your growth plan as a mindmap and export it in your preferred format.' 
+                      : '将您的成长计划可视化为思维导图，并以您喜欢的格式导出。'}
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center space-x-2">

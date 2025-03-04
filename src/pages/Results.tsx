@@ -99,7 +99,7 @@ const Results: React.FC = () => {
           'Authorization': `Bearer ${key}`
         },
         body: JSON.stringify({
-          model: "deepseek-chat",
+          model: "deepseek-reasoner", // Changed from "deepseek-chat" to "deepseek-reasoner"
           messages: [
             { role: "system", content: "你是一个个人成长顾问，专注于帮助用户根据他们的性格、技能和目标创建个性化的成长计划。" },
             { role: "user", content: prompt }
