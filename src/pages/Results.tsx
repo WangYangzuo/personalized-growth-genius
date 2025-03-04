@@ -78,20 +78,11 @@ const Results: React.FC = () => {
         
         人生目标:
         ${lifeObjectives}
-        
-        请以Markdown格式返回一个全面的个性化成长计划，包括：
-        1. 个人概况分析
-        2. 成长策略概述
-        3. 每周时间安排建议
-        4. 每日实践建议
-        5. 为期三个月的进步路线图
-        6. 推荐资源
-        7. 进度追踪方法
       `;
       
       console.log("Sending request to DeepSeek API...");
       
-      // Using fetch API to call DeepSeek API
+      // Using fetch API to call DeepSeek API with updated parameters
       const response = await fetch('https://api.deepseek.com/chat/completions', {
         method: 'POST',
         headers: {
@@ -99,11 +90,22 @@ const Results: React.FC = () => {
           'Authorization': `Bearer ${key}`
         },
         body: JSON.stringify({
-          model: "deepseek-reasoner", // Changed from "deepseek-chat" to "deepseek-reasoner"
+          model: "deepseek-chat",
           messages: [
-            { role: "system", content: "你是一个个人成长顾问，专注于帮助用户根据他们的性格、技能和目标创建个性化的成长计划。" },
-            { role: "user", content: prompt }
+            { 
+              role: "system", 
+              content: "你是一位专业的职业发展顾问，需要按照以下规则输出：\n1. 严格使用Markdown格式\n2. 采用分步骤的层级结构（STEP 1 → ▎子标题）\n3. 技术类建议需包含代码块示例\n4. 关键术语加粗+高亮（如**Ti-Ne**）\n5. 时间规划类内容用表格呈现" 
+            },
+            { 
+              role: "user", 
+              content: prompt 
+            }
           ],
+          temperature: 0.3,
+          max_tokens: 2000,
+          top_p: 0.95,
+          frequency_penalty: 0.5,
+          presence_penalty: 0.2,
           stream: false
         })
       });
