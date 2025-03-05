@@ -60,23 +60,23 @@ const Results: React.FC = () => {
       const { personalityType, skillsAssessment, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
       
       const prompt = `
-        创建一个个性化成长计划，基于以下用户资料：
+        基于以下个人信息，为我生成一份自我提高计划：
         
-        ${personalityType.mbti ? `MBTI类型: ${personalityType.mbti}` : ''}
-        ${personalityType.enneagram ? `九型人格: ${personalityType.enneagram}` : ''}
+        ${personalityType.mbti ? `我的MBTI类型是: ${personalityType.mbti}` : ''}
+        ${personalityType.enneagram ? `我的九型人格类型是: ${personalityType.enneagram}` : ''}
         
-        技能评估:
+        我对自己的各方面技能评估如下:
         ${Object.entries(skillsAssessment).map(([skill, level]) => `- ${skill.replace(/([A-Z])/g, ' $1').trim().replace('Skills', '')}: ${level}/10`).join('\n')}
         
-        时间可用性:
+        我可以灵活调用的时间为:
         - 工作日: 每天${freeTimeAvailability.weekdayHours}小时
         - 周末: 每天${freeTimeAvailability.weekendHours}小时
         - 首选时间段: ${freeTimeAvailability.preferredTimeOfDay}
         
-        改进目标:
+        我想要短期实现的自我提高是:
         ${improvementGoals.filter(Boolean).map(goal => `- ${goal}`).join('\n')}
         
-        人生目标:
+        我的人生目标大方向是:
         ${lifeObjectives}
       `;
       
@@ -94,15 +94,15 @@ const Results: React.FC = () => {
           messages: [
             { 
               role: "system", 
-              content: "你是一位专业的职业发展顾问，需要按照以下规则输出：\n1. 严格使用Markdown格式\n2. 采用分步骤的层级结构（STEP 1 → ▎子标题）\n3. 技术类建议需包含代码块示例\n4. 关键术语加粗+高亮（如**Ti-Ne**）\n5. 时间规划类内容用表格呈现" 
+              content: "你是一位专业的职业发展顾问，需要按照以下规则输出：\n1. 严格使用Markdown格式\n2. 采用分步骤的层级结构（STEP 1 → ▎子标题）\n3. 关键术语加粗+高亮（如**Ti-Ne**）\n4. 时间规划类内容用表格呈现" 
             },
             { 
               role: "user", 
               content: prompt 
             }
           ],
-          temperature: 0.3,
-          max_tokens: 2000,
+          temperature: 0.5,
+          max_tokens: 5000,
           top_p: 0.95,
           frequency_penalty: 0.5,
           presence_penalty: 0.2,
