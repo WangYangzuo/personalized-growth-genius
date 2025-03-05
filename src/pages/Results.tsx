@@ -60,7 +60,7 @@ const Results: React.FC = () => {
       const { personalityType, skillsAssessment, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
       
       const prompt = `
-        基于以下个人信息，为我生成一份自我提高计划，需要尽可能详细：
+        基于以下个人信息，为我生成一份自我提高计划，需要尽可能详细，且日程安排所占比例高一些：
         
         ${personalityType.mbti ? `我的MBTI类型是: ${personalityType.mbti}` : ''}
         ${personalityType.enneagram ? `我的九型人格类型是: ${personalityType.enneagram}` : ''}
@@ -102,7 +102,7 @@ const Results: React.FC = () => {
             }
           ],
           temperature: 0.5,
-          max_tokens: 5000,
+          max_tokens: 10000,
           top_p: 0.95,
           frequency_penalty: 0.5,
           presence_penalty: 0.2,
