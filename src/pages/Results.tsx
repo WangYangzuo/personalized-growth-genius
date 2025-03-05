@@ -102,7 +102,7 @@ const Results: React.FC = () => {
             }
           ],
           temperature: 0.5,
-          max_tokens: 10000,
+          max_tokens: 8000,
           top_p: 0.95,
           frequency_penalty: 0.5,
           presence_penalty: 0.2,
