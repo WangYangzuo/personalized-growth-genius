@@ -60,7 +60,7 @@ const Results: React.FC = () => {
       const { personalityType, skillsAssessment, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
       
       const prompt = `
-        基于以下个人信息，为我生成一份自我提高计划：
+        基于以下个人信息，为我生成一份自我提高计划，需要尽可能详细：
         
         ${personalityType.mbti ? `我的MBTI类型是: ${personalityType.mbti}` : ''}
         ${personalityType.enneagram ? `我的九型人格类型是: ${personalityType.enneagram}` : ''}
