@@ -71,19 +71,19 @@ const Results: React.FC = () => {
           'Authorization': `Bearer ${key}`
         },
         body: JSON.stringify({
-          model: "deepseek-chat",
+          model: "deepseek-reasoner",
           messages: [
             { 
               role: "system", 
-              content: "你是一位专业的职业发展顾问，需要按照以下规则输出：\n1. 严格使用Markdown格式\n2. 采用分步骤的层级结构（STEP 1 → ▎子标题）\n3. 技术类建议需包含代码块示例\n4. 关键术语加粗+高亮（如**Ti-Ne**）\n5. 时间规划类内容用表格呈现" 
+              content: "你是一位专业的职业发展顾问，需要按照以下规则输出：\n1. 严格使用Markdown格式\n2. 第一部分为性格优劣势分析，字数约600左右，优势与劣势各三个\n3. 第二部分为人生发展与自我提升建议，约600字左右，包含职业发展路径规划、性格短板针对性突破、技能深化与拓展方向和长期个人成长策略\n4. 第三部分为关键行动清单，约400字，按照三个月、六个月和半年的时间段生成对应行动\n5. 第四部分为具体实施计划，需要参考微习惯和即使庆祝的理念。包含时间资源精算表（约200字）、具体时间分配方案（约400字）、人格特化增效技巧（约300字）、紧急避坑指南（约200字）与效果追踪与迭代（约200字）" 
             },
             { 
               role: "user", 
               content: prompt 
             }
           ],
-          temperature: 0.3,
-          max_tokens: 2000,
+          temperature: 0.5,
+          max_tokens: 8000,
           top_p: 0.95,
           frequency_penalty: 0.5,
           presence_penalty: 0.2,
