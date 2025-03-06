@@ -42,7 +42,7 @@ const Results: React.FC = () => {
       }
       
       const prompt = `
-        请基于以下个人信息，分析我的性格优劣势，结合我的技能、当前状况，为我生成一份人生发展和自我提高计划，需要尽可能详细：
+        请基于以下个人信息，分析我的性格优劣势，结合我的技能、当前状况，为我生成一份人生发展和自我提高计划，需要尽可能详细，语言通俗易懂，尽可能少用术语：
         
         ${personalityType.mbti ? `我的MBTI类型是: ${personalityType.mbti}` : ''}
         ${formattedEnneagram ? `我的九型人格类型是: ${formattedEnneagram}` : ''}
