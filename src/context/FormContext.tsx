@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Define the types for our form state
@@ -14,7 +13,6 @@ export type FormData = {
   freeTimeAvailability: {
     weekdayHours: number;
     weekendHours: number;
-    preferredTimeOfDay: 'morning' | 'afternoon' | 'evening' | 'night';
   };
   improvementGoals: string[];
   lifeObjectives: string;
@@ -32,7 +30,6 @@ const initialFormData: FormData = {
   freeTimeAvailability: {
     weekdayHours: 2,
     weekendHours: 4,
-    preferredTimeOfDay: 'morning',
   },
   improvementGoals: [],
   lifeObjectives: '',

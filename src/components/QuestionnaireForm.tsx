@@ -1,18 +1,16 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFormContext } from '@/context/FormContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { 
-  ArrowLeft, ArrowRight, Check, ChevronDown, 
+  ArrowLeft, ArrowRight, Check, ExternalLink,
   BrainCircuit, FileText, Clock, Target, Compass 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { 
   Select,
   SelectContent,
@@ -232,6 +230,28 @@ const QuestionnaireForm: React.FC = () => {
                   </p>
                 </div>
 
+                {/* Test links */}
+                <div className="flex flex-col md:flex-row justify-center gap-4 mb-6">
+                  <a 
+                    href="https://www.16personalities.com/ch" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 text-accent hover:text-accent-dark transition-colors"
+                  >
+                    <span>{language === 'en' ? 'Take MBTI Test' : '进行MBTI测试'}</span>
+                    <ExternalLink size={16} />
+                  </a>
+                  <a 
+                    href="https://enneagram-personality.com/zh-Hans" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 text-accent hover:text-accent-dark transition-colors"
+                  >
+                    <span>{language === 'en' ? 'Take Enneagram Test' : '进行九型人格测试'}</span>
+                    <ExternalLink size={16} />
+                  </a>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="mbti">{t('mbti.type', 'MBTI类型')}</Label>
@@ -422,28 +442,6 @@ const QuestionnaireForm: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                </div>
-
-                <div className="mt-8 space-y-3">
-                  <Label htmlFor="preferred-time" className="text-base font-medium">
-                    {t('preferred.time', '首选时间段')}
-                  </Label>
-                  <Select
-                    value={formData.freeTimeAvailability.preferredTimeOfDay}
-                    onValueChange={(value: any) => 
-                      updateField('freeTimeAvailability', 'preferredTimeOfDay', value)
-                    }
-                  >
-                    <SelectTrigger id="preferred-time" className="input-field">
-                      <SelectValue placeholder={t('preferred.time', '选择首选时间')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="morning">{t('time.morning', '早晨 (5am - 11am)')}</SelectItem>
-                      <SelectItem value="afternoon">{t('time.afternoon', '下午 (11am - 5pm)')}</SelectItem>
-                      <SelectItem value="evening">{t('time.evening', '傍晚 (5pm - 10pm)')}</SelectItem>
-                      <SelectItem value="night">{t('time.night', '夜晚 (10pm - 5am)')}</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
             )}
