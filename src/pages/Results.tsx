@@ -4,13 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import PlanDocument from '@/components/PlanDocument';
 import { useFormContext } from '@/context/FormContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { toast } from "@/components/ui/use-toast";
+
+// Embedded API key - hardcoded for this application
+const DEEPSEEK_API_KEY = 'sk-0dea084e0b0d4f0fa927e79d276ba180';
 
 const Results: React.FC = () => {
   const { formData } = useFormContext();
@@ -18,42 +19,15 @@ const Results: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [generatedPlan, setGeneratedPlan] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
 
   useEffect(() => {
     if (!formData.personalityType.mbti && !formData.personalityType.enneagram && !formData.lifeObjectives) {
       navigate('/questionnaire');
     } else {
-      const savedApiKey = localStorage.getItem('deepseek_api_key');
-      if (savedApiKey) {
-        setApiKey(savedApiKey);
-        generatePlanWithAPI(savedApiKey);
-      } else {
-        setShowApiKeyInput(true);
-        setTimeout(() => {
-          setGeneratedPlan(generateMockPlan());
-          setLoading(false);
-        }, 3000);
-      }
+      // Directly use the embedded API key
+      generatePlanWithAPI(DEEPSEEK_API_KEY);
     }
   }, [formData, navigate]);
-
-  const handleApiKeySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (apiKey.trim()) {
-      localStorage.setItem('deepseek_api_key', apiKey);
-      setShowApiKeyInput(false);
-      setLoading(true);
-      generatePlanWithAPI(apiKey);
-    } else {
-      toast({
-        title: language === 'en' ? "API Key Required" : "需要API密钥",
-        description: language === 'en' ? "Please enter your DeepSeek API key" : "请输入您的DeepSeek API密钥",
-        variant: "destructive",
-      });
-    }
-  };
 
   const generatePlanWithAPI = async (key: string) => {
     try {
@@ -295,42 +269,6 @@ ${lifeObjectives.slice(0, 150)}...
               : (language === 'en' ? "Your AI-generated plan is ready! Download or copy the content below." : "您的AI生成计划已准备就绪！下载或复制以下内容。")}
           </p>
         </motion.div>
-        
-        {showApiKeyInput && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white p-6 rounded-xl shadow-soft border border-gray-100 max-w-md mx-auto mb-8"
-          >
-            <h2 className="text-xl font-semibold mb-4">
-              {language === 'en' ? 'Enter DeepSeek API Key' : '输入DeepSeek API密钥'}
-            </h2>
-            <p className="text-sm text-gray-500 mb-4">
-              {language === 'en' 
-                ? "To generate a personalized plan with AI, enter your DeepSeek API key. Your key will be stored locally." 
-                : "要使用AI生成个性化计划，请输入您的DeepSeek API密钥。您的密钥将存储在本地。"}
-            </p>
-            <form onSubmit={handleApiKeySubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="api-key">
-                  {language === 'en' ? 'DeepSeek API Key' : 'DeepSeek API密钥'}
-                </Label>
-                <Input
-                  id="api-key"
-                  type="password"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder={language === 'en' ? "Enter your API key" : "输入您的API密钥"}
-                  className="mt-1 w-full"
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                {language === 'en' ? 'Generate with DeepSeek AI' : '使用DeepSeek AI生成'}
-              </Button>
-            </form>
-          </motion.div>
-        )}
         
         {loading ? (
           <motion.div
