@@ -5,32 +5,12 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 export type PersonalityType = {
   mbti: string;
   enneagram: string;
-  jungianFunctions: {
-    Se: number;
-    Si: number;
-    Ne: number;
-    Ni: number;
-    Te: number;
-    Ti: number;
-    Fe: number;
-    Fi: number;
-  };
-};
-
-export type SkillsAssessment = {
-  technicalSkills: number;
-  creativeSkills: number;
-  communicationSkills: number;
-  analyticalSkills: number;
-  organizationalSkills: number;
-  interpersonalSkills: number;
-  leadershipSkills: number;
-  adaptabilitySkills: number;
+  enneagramWing: string;
 };
 
 export type FormData = {
   personalityType: PersonalityType;
-  skillsAssessment: SkillsAssessment;
+  currentSituation: string;
   freeTimeAvailability: {
     weekdayHours: number;
     weekendHours: number;
@@ -46,27 +26,9 @@ const initialFormData: FormData = {
   personalityType: {
     mbti: '',
     enneagram: '',
-    jungianFunctions: {
-      Se: 0,
-      Si: 0,
-      Ne: 0,
-      Ni: 0,
-      Te: 0,
-      Ti: 0,
-      Fe: 0,
-      Fi: 0,
-    },
+    enneagramWing: '',
   },
-  skillsAssessment: {
-    technicalSkills: 5,
-    creativeSkills: 5,
-    communicationSkills: 5,
-    analyticalSkills: 5,
-    organizationalSkills: 5,
-    interpersonalSkills: 5,
-    leadershipSkills: 5,
-    adaptabilitySkills: 5,
-  },
+  currentSituation: '',
   freeTimeAvailability: {
     weekdayHours: 2,
     weekendHours: 4,
@@ -130,7 +92,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       // Handle regular fields - create a properly typed update
-      if (section === 'improvementGoals' || section === 'lifeObjectives' || section === 'currentStep') {
+      if (section === 'improvementGoals' || section === 'lifeObjectives' || section === 'currentStep' || section === 'currentSituation') {
         // These fields don't have subfields that need updating
         return {
           ...prev,

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -5,7 +6,7 @@ import { useFormContext } from '@/context/FormContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { 
   ArrowLeft, ArrowRight, Check, ChevronDown, 
-  BrainCircuit, Dumbbell, Clock, Target, Compass 
+  BrainCircuit, FileText, Clock, Target, Compass 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -32,29 +33,29 @@ const mbtiTypes = [
 const getEnneagramTypes = (language: string) => {
   if (language === 'en') {
     return [
-      'Type 1 - The Perfectionist',
-      'Type 2 - The Helper',
-      'Type 3 - The Achiever',
-      'Type 4 - The Individualist',
-      'Type 5 - The Investigator',
-      'Type 6 - The Loyalist',
-      'Type 7 - The Enthusiast',
-      'Type 8 - The Challenger',
-      'Type 9 - The Peacemaker'
+      'Type 1', 'Type 2', 'Type 3', 'Type 4', 'Type 5',
+      'Type 6', 'Type 7', 'Type 8', 'Type 9'
     ];
   } else {
     return [
-      'Type 1 - 完美主义者',
-      'Type 2 - 助人者',
-      'Type 3 - 成就者',
-      'Type 4 - 个人主义者',
-      'Type 5 - 研究者',
-      'Type 6 - 忠诚者',
-      'Type 7 - 活跃者',
-      'Type 8 - 挑战者',
-      'Type 9 - 和平者'
+      'Type 1', 'Type 2', 'Type 3', 'Type 4', 'Type 5',
+      'Type 6', 'Type 7', 'Type 8', 'Type 9'
     ];
   }
+};
+
+// Enneagram wing options
+const getEnneagramWings = (enneagramType: string): string[] => {
+  if (!enneagramType) return [];
+  
+  const typeNumber = parseInt(enneagramType.replace('Type ', ''));
+  if (isNaN(typeNumber)) return [];
+  
+  // Wings are adjacent types (wrapping from 9 to 1 and 1 to 9)
+  const leftWing = typeNumber === 1 ? 9 : typeNumber - 1;
+  const rightWing = typeNumber === 9 ? 1 : typeNumber + 1;
+  
+  return [`Type ${leftWing}`, `Type ${rightWing}`];
 };
 
 // Improvement goals options with translations
@@ -107,7 +108,7 @@ const QuestionnaireForm: React.FC = () => {
   // Labels for each step
   const steps = [
     { name: t('step.personality', '性格'), icon: <BrainCircuit size={18} /> },
-    { name: t('step.skills', '技能'), icon: <Dumbbell size={18} /> },
+    { name: t('step.situation', '现状'), icon: <FileText size={18} /> },
     { name: t('step.time', '时间'), icon: <Clock size={18} /> },
     { name: t('step.goals', '目标'), icon: <Target size={18} /> },
     { name: t('step.vision', '愿景'), icon: <Compass size={18} /> }
@@ -117,9 +118,10 @@ const QuestionnaireForm: React.FC = () => {
   const validateStep = (step: number) => {
     switch (step) {
       case 0: // Personality type
-        return formData.personalityType.mbti !== '' || formData.personalityType.enneagram !== '';
-      case 1: // Skills
-        return true; // Skills have default values
+        return formData.personalityType.mbti !== '' || 
+               (formData.personalityType.enneagram !== '' && formData.personalityType.enneagramWing !== '');
+      case 1: // Current situation
+        return formData.currentSituation.trim() !== '';
       case 2: // Time availability
         return true; // Time has default values
       case 3: // Improvement goals
@@ -162,6 +164,7 @@ const QuestionnaireForm: React.FC = () => {
   };
 
   const enneagramTypes = getEnneagramTypes(language);
+  const enneagramWings = getEnneagramWings(formData.personalityType.enneagram);
   const improvementGoalOptions = getImprovementGoalOptions(language);
 
   return (
@@ -255,18 +258,20 @@ const QuestionnaireForm: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="enneagram">{t('enneagram.type', '九型人格')}</Label>
+                    <Label htmlFor="enneagram">{t('enneagram.type', '九型人格核心类型')}</Label>
                     <Select
                       value={formData.personalityType.enneagram}
-                      onValueChange={(value) => 
-                        updateField('personalityType', 'enneagram', value)
-                      }
+                      onValueChange={(value) => {
+                        // Reset wing when core type changes
+                        updateField('personalityType', 'enneagram', value);
+                        updateField('personalityType', 'enneagramWing', '');
+                      }}
                     >
                       <SelectTrigger 
                         id="enneagram"
                         className={`input-field ${showErrors && formData.personalityType.mbti === '' && formData.personalityType.enneagram === '' ? 'border-red-500' : ''}`}
                       >
-                        <SelectValue placeholder={t('select.enneagram', '选择您的九型人格')} />
+                        <SelectValue placeholder={t('select.enneagram', '选择您的九型人格核心类型')} />
                       </SelectTrigger>
                       <SelectContent>
                         {enneagramTypes.map((type) => (
@@ -277,93 +282,86 @@ const QuestionnaireForm: React.FC = () => {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {formData.personalityType.enneagram && (
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="enneagramWing">{t('enneagram.wing', '九型人格翼型')}</Label>
+                      <Select
+                        value={formData.personalityType.enneagramWing}
+                        onValueChange={(value) => 
+                          updateField('personalityType', 'enneagramWing', value)
+                        }
+                        disabled={!formData.personalityType.enneagram}
+                      >
+                        <SelectTrigger 
+                          id="enneagramWing"
+                          className={`input-field ${showErrors && formData.personalityType.enneagram !== '' && formData.personalityType.enneagramWing === '' ? 'border-red-500' : ''}`}
+                        >
+                          <SelectValue placeholder={t('select.enneagram.wing', '选择您的九型人格翼型')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {enneagramWings.map((wing) => (
+                            <SelectItem key={wing} value={wing}>
+                              {wing}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {formData.personalityType.enneagram && formData.personalityType.enneagramWing && (
+                        <p className="text-sm text-gray-500 mt-2">
+                          {language === 'en' 
+                            ? `Your Enneagram type with wing: ${formData.personalityType.enneagram.replace('Type ', '')}w${formData.personalityType.enneagramWing.replace('Type ', '')}`
+                            : `您的九型人格带翼: ${formData.personalityType.enneagram.replace('Type ', '')}w${formData.personalityType.enneagramWing.replace('Type ', '')}`}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
-                <div className="space-y-4 mt-8">
-                  <h3 className="text-lg font-medium text-gray-700">{t('jungian.functions', '荣格认知功能')}</h3>
-                  <p className="text-sm text-gray-500">
-                    {t('assess.functions', '评估您在每种认知功能中的强度（0-50）')}
-                  </p>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                    {Object.keys(formData.personalityType.jungianFunctions).map((fn) => (
-                      <div key={fn} className="space-y-1">
-                        <div className="flex justify-between items-center">
-                          <Label htmlFor={`function-${fn}`} className="text-sm font-medium">
-                            {fn}
-                          </Label>
-                          <span className="text-sm text-gray-500">
-                            {formData.personalityType.jungianFunctions[fn as keyof typeof formData.personalityType.jungianFunctions]}
-                          </span>
-                        </div>
-                        <Slider
-                          id={`function-${fn}`}
-                          min={0}
-                          max={50}
-                          step={1}
-                          value={[formData.personalityType.jungianFunctions[fn as keyof typeof formData.personalityType.jungianFunctions]]}
-                          onValueChange={(value) => 
-                            updateField('personalityType', `jungianFunctions.${fn}`, value[0])
-                          }
-                          className="py-2"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {showErrors && formData.personalityType.mbti === '' && formData.personalityType.enneagram === '' && (
-                  <p className="text-red-500 text-sm mt-2">
-                    {language === 'en' ? 'Please provide at least one personality type (MBTI or Enneagram)' : '请提供至少一种性格类型（MBTI或九型人格）'}
+                {showErrors && formData.personalityType.mbti === '' && 
+                 (formData.personalityType.enneagram === '' || 
+                  (formData.personalityType.enneagram !== '' && formData.personalityType.enneagramWing === '')) && (
+                  <p className="text-red-500 text-sm mt-4">
+                    {language === 'en' 
+                      ? 'Please provide either MBTI type or complete Enneagram type with wing' 
+                      : '请提供MBTI类型或完整的九型人格类型（含翼型）'}
                   </p>
                 )}
               </div>
             )}
 
-            {/* Skills Assessment */}
+            {/* Current Situation */}
             {formData.currentStep === 1 && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-semibold text-gray-800">
-                    {t('skills.assessment', '技能评估')}
+                    {t('current.situation', '当前状况描述')}
                   </h2>
                   <p className="text-gray-500 mt-1">
-                    {t('skills.description', '评估您当前的技能水平，以帮助定制您的成长计划')}
+                    {t('situation.description', '描述您当前的情况，以帮助我们为您定制成长计划')}
                   </p>
                 </div>
 
-                <div className="space-y-8">
-                  {Object.keys(formData.skillsAssessment).map((skill) => {
-                    const skillName = skill.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase()).replace('Skills', '');
-                    return (
-                      <div key={skill} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <Label htmlFor={`skill-${skill}`} className="text-base font-medium">
-                            {language === 'en' ? skillName : getSkillName(skill, language)}
-                          </Label>
-                          <span className="text-sm text-gray-500">
-                            {formData.skillsAssessment[skill as keyof typeof formData.skillsAssessment]}
-                          </span>
-                        </div>
-                        <Slider
-                          id={`skill-${skill}`}
-                          min={1}
-                          max={10}
-                          step={1}
-                          value={[formData.skillsAssessment[skill as keyof typeof formData.skillsAssessment]]}
-                          onValueChange={(value) => 
-                            updateField('skillsAssessment', skill, value[0])
-                          }
-                          className="py-2"
-                        />
-                        <div className="flex justify-between text-xs text-gray-400">
-                          <span>{t('skill.beginner', '初学者')}</span>
-                          <span>{t('skill.intermediate', '中级')}</span>
-                          <span>{t('skill.expert', '专家')}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div className="space-y-3">
+                  <Label htmlFor="current-situation" className="text-base font-medium">
+                    {t('describe.situation', '请描述您的当前状况')}
+                  </Label>
+                  <Textarea
+                    id="current-situation"
+                    value={formData.currentSituation}
+                    onChange={(e) => updateField('currentSituation', '', e.target.value)}
+                    placeholder={language === 'en' 
+                      ? "I am currently a bioinformatics engineer. I have skills in Python programming, data analysis, and investment. I am good at... I am not good at..."
+                      : "我目前是一个生物信息工程师，我掌握Python编程、数据分析、投资等技能。我擅长...不擅长..."}
+                    className={`min-h-[200px] input-field ${
+                      showErrors && formData.currentSituation.trim() === '' ? 'border-red-500' : ''
+                    }`}
+                  />
+                  {showErrors && formData.currentSituation.trim() === '' && (
+                    <p className="text-red-500 text-sm">
+                      {language === 'en' ? 'Please describe your current situation' : '请描述您的当前状况'}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
@@ -519,7 +517,7 @@ const QuestionnaireForm: React.FC = () => {
                     {t('life.goals.question', '您的主要人生目标和愿望是什么？')}
                   </Label>
                   <Textarea
-                    id="life-object"
+                    id="life-objectives"
                     value={formData.lifeObjectives}
                     onChange={(e) => updateField('lifeObjectives', '', e.target.value)}
                     placeholder={t('life.goals.placeholder', '描述您的长期愿景、人生目标，以及成功对您意味着什么...')}
@@ -571,19 +569,6 @@ const QuestionnaireForm: React.FC = () => {
       </form>
     </div>
   );
-};
-
-const getSkillName = (skill: string, language: string) => {
-  const skillTranslations: {[key: string]: string} = {
-    'communicationSkills': '沟通技能',
-    'leadershipSkills': '领导能力',
-    'problemSolvingSkills': '解决问题的能力',
-    'creativitySkills': '创造力',
-    'technicalSkills': '技术技能',
-    'emotionalIntelligenceSkills': '情商'
-  };
-  
-  return skillTranslations[skill] || skill;
 };
 
 export default QuestionnaireForm;

@@ -57,16 +57,24 @@ const Results: React.FC = () => {
 
   const generatePlanWithAPI = async (key: string) => {
     try {
-      const { personalityType, skillsAssessment, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
+      const { personalityType, currentSituation, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
+      
+      // Format the enneagram type with wing if both are provided
+      let formattedEnneagram = '';
+      if (personalityType.enneagram && personalityType.enneagramWing) {
+        const coreType = personalityType.enneagram.replace('Type ', '');
+        const wingType = personalityType.enneagramWing.replace('Type ', '');
+        formattedEnneagram = `${coreType}w${wingType}`;
+      }
       
       const prompt = `
         请基于以下个人信息，分析我的性格优劣势，结合我的技能，为我生成一份人生发展和自我提高计划，需要尽可能详细：
         
         ${personalityType.mbti ? `我的MBTI类型是: ${personalityType.mbti}` : ''}
-        ${personalityType.enneagram ? `我的九型人格类型是: ${personalityType.enneagram}` : ''}
+        ${formattedEnneagram ? `我的九型人格类型是: ${formattedEnneagram}` : ''}
         
-        我对自己的各方面技能评估如下:
-        ${Object.entries(skillsAssessment).map(([skill, level]) => `- ${skill.replace(/([A-Z])/g, ' $1').trim().replace('Skills', '')}: ${level}/10`).join('\n')}
+        我的当前状况:
+        ${currentSituation}
         
         我可以灵活调用的时间为:
         - 工作日: 每天${freeTimeAvailability.weekdayHours}小时
@@ -94,15 +102,15 @@ const Results: React.FC = () => {
           messages: [
             { 
               role: "system", 
-              content: "你是一位专业的职业发展顾问，需要按照以下规则输出：\n1. 严格使用Markdown格式\n2. 第一部分为性格优劣势分析，约600字左右，优势与劣势各提3点来\n3. 第二部分为人生发展与自我提升建议，约600字左右，包含职业发展路径规划、性格短板针对性突破、技能深化与拓展方向和长期个人成长策略四个部分\n4. 第三部分为自我提高方案，包含一个时间资源精算表（包括工作日与周末时间），一个具体时间分配方案（约600字），一个人格特化增效技巧（约400字），一个紧急避坑指南（约400字）和效果追踪与迭代（约300字）。" 
+              content: "你是一位专业的职业发展顾问，需要按照以下规则输出：\n1. 严格使用Markdown格式\n2. 采用分步骤的层级结构（STEP 1 → ▎子标题）\n3. 技术类建议需包含代码块示例\n4. 关键术语加粗+高亮（如**Ti-Ne**）\n5. 时间规划类内容用表格呈现" 
             },
             { 
               role: "user", 
               content: prompt 
             }
           ],
-          temperature: 0.5,
-          max_tokens: 8000,
+          temperature: 0.3,
+          max_tokens: 2000,
           top_p: 0.95,
           frequency_penalty: 0.5,
           presence_penalty: 0.2,
@@ -137,7 +145,7 @@ const Results: React.FC = () => {
   };
 
   const generateMockPlan = () => {
-    const { personalityType, skillsAssessment, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
+    const { personalityType, currentSituation, freeTimeAvailability, improvementGoals, lifeObjectives } = formData;
     
     let personalityInsights = '';
     if (personalityType.mbti) {
@@ -151,19 +159,25 @@ const Results: React.FC = () => {
       personalityInsights += isThinking
         ? "您的思维偏好表明了一种结构化的解决问题的方法。"
         : "您的感觉偏好表明了一种基于价值观的决策方法。";
-    } else if (personalityType.enneagram) {
-      if (personalityType.enneagram.includes("Type 1")) {
-        personalityInsights = "作为一个1型人格，您的完美主义倾向可以通过专注于进步而不是完美来实现有意义的提升。";
-      } else if (personalityType.enneagram.includes("Type 2")) {
-        personalityInsights = "作为一个2型人格，请确保在帮助他人的同时，也要平衡好自我关怀和个人发展。";
+    } 
+    
+    let enneagramInsights = '';
+    if (personalityType.enneagram && personalityType.enneagramWing) {
+      const coreType = personalityType.enneagram.replace('Type ', '');
+      const wingType = personalityType.enneagramWing.replace('Type ', '');
+      
+      if (coreType === '1') {
+        enneagramInsights = `作为一个${coreType}w${wingType}型人格，您的完美主义倾向可以通过专注于进步而不是完美来实现有意义的提升。`;
+      } else if (coreType === '2') {
+        enneagramInsights = `作为一个${coreType}w${wingType}型人格，请确保在帮助他人的同时，也要平衡好自我关怀和个人发展。`;
       } else {
-        personalityInsights = "您的九型人格表明了一种独特的成长方法，该方法平衡了您的核心动机与实际发展。";
+        enneagramInsights = `您的${coreType}w${wingType}九型人格表明了一种独特的成长方法，该方法平衡了您的核心动机与实际发展。`;
       }
     }
     
-    const skillsArray = Object.entries(skillsAssessment);
-    const lowestSkills = skillsArray.sort((a, b) => a[1] - b[1]).slice(0, 2);
-    const highestSkills = skillsArray.sort((a, b) => b[1] - a[1]).slice(0, 2);
+    const situationSummary = currentSituation.length > 200 
+      ? `${currentSituation.substring(0, 200)}...` 
+      : currentSituation;
     
     const timeFraming = freeTimeAvailability.weekdayHours >= 3 
       ? "您每天有足够的时间用于发展。" 
@@ -171,38 +185,59 @@ const Results: React.FC = () => {
     
     return `# 您的个性化成长计划
 
-## 个人资料摘要
+## STEP 1 → ▎个人资料摘要
 
 ${personalityType.mbti ? `**MBTI类型:** ${personalityType.mbti}` : ''}
-${personalityType.enneagram ? `**九型人格:** ${personalityType.enneagram}` : ''}
+${personalityType.enneagram && personalityType.enneagramWing ? `**九型人格:** ${personalityType.enneagram.replace('Type ', '')}w${personalityType.enneagramWing.replace('Type ', '')}` : ''}
 
 **关键性格洞察:**
 ${personalityInsights}
+${enneagramInsights}
 
-## 成长策略概述
+**当前状况概述:**
+${situationSummary}
+
+## STEP 2 → ▎成长策略概述
 
 根据您的个人资料，本计划专注于:
-* ${improvementGoals.slice(0, 3).join('\n* ')}
-* 发挥您在${highestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[0]}和${highestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[1]}方面的优势
-* 提升您的${lowestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[0]}和${lowestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[1]}
+* ${improvementGoals.slice(0, 3).filter(Boolean).join('\n* ') || '个人发展与提升'}
+* 充分利用您当前的技能和经验
+* 在时间有限的情况下取得最大进展
 
-## 每周计划
+## STEP 3 → ▎每周计划
 
 ${timeFraming} 您的最佳时间安排包括:
 
-### 工作日 (${freeTimeAvailability.weekdayHours} 小时/天)
-* 20分钟: 晨间反思和计划回顾
-* 30分钟: 专注于${lowestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[0]}的技能发展
-* 45分钟: 主要目标进展: ${improvementGoals[0] || '个人发展'}
-* 25分钟: 阅读或学习与您的兴趣相关的内容
+| 时间段 | 工作日 (${freeTimeAvailability.weekdayHours}小时/天) | 周末 (${freeTimeAvailability.weekendHours}小时/天) |
+|--------|--------------------------|--------------------------|
+| 早晨 | 20分钟: 晨间反思和计划回顾 | 1小时: 深度学习与提升 |
+| 下午 | 30分钟: 专注技能发展 | 1小时: 项目实践与应用 |
+| 晚上 | 45分钟: 主要目标进展 | 30分钟: 社交与网络建设 |
+| 睡前 | 25分钟: 阅读与学习 | 30分钟: 周回顾与计划 |
 
-### 周末 (${freeTimeAvailability.weekendHours} 小时/天)
-* 1小时: 深度学习${lowestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[0]}技能发展
-* 1小时: 与${improvementGoals[1] || '次要目标'}相关的项目工作
-* 30分钟: 与您的价值观一致的社交或社区活动
-* 30分钟: 回顾并为即将到来的一周做计划
+## STEP 4 → ▎核心技能提升策略
 
-## 日常实践
+以下是针对您所提到技能的具体提升策略：
+
+\`\`\`python
+# 示例：持续技能提升的代码实现
+class SkillDevelopmentPlan:
+    def __init__(self, current_skills, improvement_goals):
+        self.current_skills = current_skills
+        self.goals = improvement_goals
+        self.progress = {}
+    
+    def set_daily_practice(self, skill, time_minutes):
+        """为特定技能设置每日练习时间"""
+        return f"每天投入{time_minutes}分钟提升{skill}技能"
+    
+    def track_progress(self, skill):
+        """追踪特定技能的进步"""
+        # 实际应用中可对接习惯追踪工具
+        pass
+\`\`\`
+
+## STEP 5 → ▎日常实践建议
 
 ### 晨间例行公事 (符合您的${freeTimeAvailability.preferredTimeOfDay}偏好)
 * 5分钟正念冥想
@@ -214,72 +249,17 @@ ${timeFraming} 您的最佳时间安排包括:
 * 记录一个见解或学习
 * 为明天做准备
 
-## 每月重点领域
-
-### 第1个月：奠定基础
-* 建立核心日常习惯
-* 开始在${lowestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[0]}方面发展技能
-* 为您的主要目标设定基准测量
-
-### 第2个月：技能发展
-* 增加对${lowestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[1]}的关注
-* 在与${improvementGoals[0] || '您的主要目标'}相关的领域扩大您的网络
-* 开始一个结合多个技能领域的项目
-
-### 第3个月：整合与动力
-* 在实际应用中连接不同的技能领域
-* 评估进展并根据需要调整方法
-* 通过新的挑战扩展您的舒适区
-
-## 推荐资源
-
-### 书籍
-* 《微习惯》作者：詹姆斯·克利尔
-* 《思维方式》作者：卡罗尔·德韦克
-* 一本专门用于${lowestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[0]}发展的专业指南
-
-### 课程
-* 关于${lowestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[0]}的入门课程
-* ${highestSkills.map(s => s[0].replace(/([A-Z])/g, ' $1').trim().replace('Skills', ''))[0]}的高级工作坊
-
-### 应用程序和工具
-* 习惯追踪：Habitica或Loop Habit Tracker
-* 学习：Coursera，LinkedIn Learning
-* 反思：Day One Journal或类似工具
-
-## 与人生目标的个人契合
+## STEP 6 → ▎长期发展路径
 
 您分享的人生目标关注于：
 ${lifeObjectives.slice(0, 150)}...
 
-这个计划通过以下方式支持这些目标：
+这个计划通过以下方式支持您的目标：
 * 建立长期成功所需的基本技能
 * 创建支持可持续成长的习惯
 * 平衡即时改进与长期愿景
 
-## 进度追踪
-
-### 每周回顾问题
-1. 我在优先目标上取得了什么进展？
-2. 哪些习惯最有效？
-3. 我遇到了哪些障碍，我如何解决它们？
-4. 下周我应该做哪些调整？
-
-### 每月评估
-* 审视关键技能领域的可衡量进展
-* 评估习惯的一致性和有效性
-* 根据需要调整日常和每周时间表
-* 庆祝成就并确定下一个成长边界
-
-## 下一步
-
-1. 审视整个计划
-2. 安排您的第一周活动
-3. 准备您的跟踪系统
-4. 明天开始您的晨间例行公事
-5. 安排您的第一次每周回顾
-
-请记住，成长不是线性的。专注于一致性而不是完美，并根据您独特情况的发现调整这个计划。
+**关键成功因素:** 专注于一致性而不是完美，根据您的独特情况调整这个计划。
 `;
   };
 

@@ -3,7 +3,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
-import PersonalityTestLinks from '@/components/PersonalityTestLinks';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -40,7 +39,7 @@ const Index: React.FC = () => {
           </p>
         </motion.div>
         
-        {/* Main CTA button - 修改按钮，确保在移动设备上也能正常工作 */}
+        {/* Main CTA button */}
         <motion.div 
           className="relative flex justify-center my-16"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -82,9 +81,6 @@ const Index: React.FC = () => {
             </motion.button>
           </Link>
         </motion.div>
-        
-        {/* Personality test links */}
-        <PersonalityTestLinks />
         
         {/* Features section */}
         <motion.div 
