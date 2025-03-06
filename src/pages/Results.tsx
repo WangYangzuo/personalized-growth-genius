@@ -79,7 +79,6 @@ const Results: React.FC = () => {
         我可以灵活调用的时间为:
         - 工作日: 每天${freeTimeAvailability.weekdayHours}小时
         - 周末: 每天${freeTimeAvailability.weekendHours}小时
-        - 首选时间段: ${freeTimeAvailability.preferredTimeOfDay}
         
         我想要短期实现的自我提高是:
         ${improvementGoals.filter(Boolean).map(goal => `- ${goal}`).join('\n')}
@@ -239,7 +238,7 @@ class SkillDevelopmentPlan:
 
 ## STEP 5 → ▎日常实践建议
 
-### 晨间例行公事 (符合您的${freeTimeAvailability.preferredTimeOfDay}偏好)
+### 晨间例行公事
 * 5分钟正念冥想
 * 审视您的日常优先事项
 * 为当天设定一个主要意图
