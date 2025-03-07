@@ -72,6 +72,7 @@ const Results: React.FC = () => {
         },
         body: JSON.stringify({
           model: "deepseek-reasoner",
+          language: language === 'en' ? 'en' : 'zh', // Add language parameter based on current UI language
           messages: [
             { 
               role: "system", 
