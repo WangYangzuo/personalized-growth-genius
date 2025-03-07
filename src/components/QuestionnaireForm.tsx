@@ -371,8 +371,8 @@ const QuestionnaireForm: React.FC = () => {
                     value={formData.currentSituation}
                     onChange={(e) => updateField('currentSituation', '', e.target.value)}
                     placeholder={language === 'en' 
-                      ? "I am currently a bioinformatics engineer. I have skills in Python programming, data analysis, and investment. I am good at... I am not good at..."
-                      : "我目前是一个生物信息工程师，我掌握Python编程、数据分析、投资等技能。我擅长...不擅长..."}
+                      ? "Example: I am currently a bioinformatics engineer. I have skills in Python programming, data analysis. I am good at... I am not good at..."
+                      : "例子：我目前是一个生物信息工程师，我掌握Python编程、数据分析等技能，我擅长...不擅长..."}
                     className={`min-h-[200px] input-field ${
                       showErrors && formData.currentSituation.trim() === '' ? 'border-red-500' : ''
                     }`}
