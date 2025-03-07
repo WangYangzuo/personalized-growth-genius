@@ -77,6 +77,10 @@ const translations: Record<string, Record<Language, string>> = {
     en: 'Skills',
     zh: '技能'
   },
+  'step.situation': {
+    en: 'Situation',
+    zh: '现状'
+  },
   'step.time': {
     en: 'Time',
     zh: '时间'
@@ -108,11 +112,19 @@ const translations: Record<string, Record<Language, string>> = {
   },
   'enneagram.type': {
     en: 'Enneagram Type',
-    zh: '九型人格'
+    zh: '九型人格核心类型'
   },
   'select.enneagram': {
     en: 'Select your Enneagram type',
-    zh: '选择您的九型人格'
+    zh: '选择您的九型人格核心类型'
+  },
+  'enneagram.wing': {
+    en: 'Enneagram Wing',
+    zh: '九型人格翼型'
+  },
+  'select.enneagram.wing': {
+    en: 'Select your Enneagram wing',
+    zh: '选择您的九型人格翼型'
   },
   'jungian.functions': {
     en: 'Jungian Cognitive Functions',
@@ -121,6 +133,19 @@ const translations: Record<string, Record<Language, string>> = {
   'assess.functions': {
     en: 'Rate your strength in each cognitive function (0-10)',
     zh: '评估您在每种认知功能中的强度（0-10）'
+  },
+  // Current Situation page
+  'current.situation': {
+    en: 'Current Situation',
+    zh: '当前状况描述'
+  },
+  'situation.description': {
+    en: 'Describe your current situation to help us customize your growth plan',
+    zh: '描述您当前的情况，以帮助我们为您定制成长计划'
+  },
+  'describe.situation': {
+    en: 'Please describe your current situation',
+    zh: '请描述您的当前状况'
   },
   // Skills page
   'skills.assessment': {
