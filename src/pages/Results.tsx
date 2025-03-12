@@ -41,7 +41,33 @@ const Results: React.FC = () => {
         formattedEnneagram = `${coreType}w${wingType}`;
       }
       
-      const prompt = `
+      // Use different prompt templates based on language
+      let prompt;
+      
+      if (language === 'en') {
+        // English prompt template
+        prompt = `
+Please analyze my personality strengths and weaknesses based on the following personal information, and combine it with my skills and current situation to create a detailed personal development and self-improvement plan. The language should be simple and easy to understand, with as few technical terms as possible, and no URLs should be included:
+
+${personalityType.mbti ? `My MBTI type is: ${personalityType.mbti}` : ''}
+${formattedEnneagram ? `My Enneagram type is: ${formattedEnneagram}` : ''}
+
+My current situation:
+${currentSituation}
+
+My available time:
+- Weekdays: ${freeTimeAvailability.weekdayHours} hours per day
+- Weekends: ${freeTimeAvailability.weekendHours} hours per day
+
+My short-term self-improvement goals:
+${improvementGoals.filter(Boolean).map(goal => `- ${goal}`).join('\n')}
+
+My long-term life objectives:
+${lifeObjectives}
+`;
+      } else {
+        // Chinese prompt template (original)
+        prompt = `
         请基于以下个人信息，分析我的性格优劣势，结合我的技能、当前状况，为我生成一份人生发展和自我提高计划，需要尽可能详细，语言通俗易懂，尽可能少用术语，不要包含网址：
         
         ${personalityType.mbti ? `我的MBTI类型是: ${personalityType.mbti}` : ''}
@@ -60,6 +86,7 @@ const Results: React.FC = () => {
         我的人生目标大方向是:
         ${lifeObjectives}
       `;
+      }
       
       console.log("Sending request to DeepSeek API...");
       
@@ -72,11 +99,11 @@ const Results: React.FC = () => {
         },
         body: JSON.stringify({
           model: "deepseek-reasoner",
-          language: 'en', // Add language parameter based on current UI language
+          language: language, // Use the current UI language
           messages: [
             { 
               role: "system", 
-              content: "你是一位专业的职业发展顾问，请按照以下规则输出：\n1. 使用Markdown格式\n2. 第一部分为性格优劣势分析，字数约600左右，优势与劣势各三个，需要结合mbti的功能\n3. 第二部分为人生发展与自我提升建议，约600字左右，包含职业发展路径规划、性格短板针对性突破、技能深化与拓展方向和长期个人成长策略\n4. 第三部分为关键行动清单，约400字，按照三个月、六个月和半年的时间段生成对应行动\n5. 第四部分为具体实施计划，需要参考微习惯和即使庆祝的理念。包含时间资源精算表（表格格式，约200字）、具体时间分配方案（约400字）、人格特化增效技巧（约300字）、紧急避坑指南（约200字）与效果追踪与迭代（约200字）" 
+              content: "你是一位专业的职业发展顾问，请按照以下规则输出：\n1. 使用Markdown格式\n2. 第一部分为性格优劣势分析，字数约600左右，优势与劣势各三个，需要结合mbti的功能\n3. 第二部分为人生发展与自我提升建议，约600字左右，包含职业发展路径规划、性格短板针对性突破、技能深化与拓展方向和长期个人成长策略\n4. 第三部分为关键行动清单，约400字，按照三个月、六个月和半年的时间段生成对应行动\n5. 第四部分为具体实施计划，需要参考微习惯和即使庆祝的理念。包含时间资源精算表（表格格式，约200字）、具体时间分配方案（约400字）、人格特化增效技巧（约300字）、紧急避坑指南（约200字）与效果追踪与迭代（约200字）\n6. 如果输入内容大部分是英文，用英文进行回答" 
             },
             { 
               role: "user", 
