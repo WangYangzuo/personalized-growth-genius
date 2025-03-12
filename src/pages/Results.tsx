@@ -90,6 +90,14 @@ ${lifeObjectives}
       
       console.log("Sending request to DeepSeek API...");
       
+      // Define system prompts based on language
+      let systemPrompt;
+      if (language === 'en') {
+        systemPrompt = "You are a professional career development consultant. Please follow these rules for your response:\n\n1. Use Markdown format\n2. Part 1: Personality Strengths and Weaknesses Analysis (around 600 words). Include three strengths and three weaknesses, integrating MBTI analysis.\n3. Part 2: Life Development and Self-improvement Suggestions (around 600 words). Cover career path planning, addressing personality weaknesses, skill development, and long-term growth strategies.\n4. Part 3: Key Action Checklist (around 400 words). Create action items for 3-month, 6-month, and one-year timeframes.\n5. Part 4: Implementation Plan. Include:\n   - Time Resource Calculation Table (table format, ~200 words)\n   - Specific Time Allocation Plan (~400 words)\n   - Personality-specific Efficiency Techniques (~300 words)\n   - Pitfall Avoidance Guide (~200 words)\n   - Effect Tracking and Iteration (~200 words)";
+      } else {
+        systemPrompt = "你是一位专业的职业发展顾问，请按照以下规则输出：\n1. 使用Markdown格式\n2. 第一部分为性格优劣势分析，字数约600左右，优势与劣势各三个，需要结合mbti的功能\n3. 第二部分为人生发展与自我提升建议，约600字左右，包含职业发展路径规划、性格短板针对性突破、技能深化与拓展方向和长期个人成长策略\n4. 第三部分为关键行动清单，约400字，按照三个月、六个月和半年的时间段生成对应行动\n5. 第四部分为具体实施计划，需要参考微习惯和即使庆祝的理念。包含时间资源精算表（表格格式，约200字）、具体时间分配方案（约400字）、人格特化增效技巧（约300字）、紧急避坑指南（约200字）与效果追踪与迭代（约200字）\n6. 如果输入内容大部分是英文，用英文进行回答";
+      }
+      
       // Using fetch API to call DeepSeek API with updated parameters
       const response = await fetch('https://api.deepseek.com/chat/completions', {
         method: 'POST',
@@ -103,7 +111,7 @@ ${lifeObjectives}
           messages: [
             { 
               role: "system", 
-              content: "你是一位专业的职业发展顾问，请按照以下规则输出：\n1. 使用Markdown格式\n2. 第一部分为性格优劣势分析，字数约600左右，优势与劣势各三个，需要结合mbti的功能\n3. 第二部分为人生发展与自我提升建议，约600字左右，包含职业发展路径规划、性格短板针对性突破、技能深化与拓展方向和长期个人成长策略\n4. 第三部分为关键行动清单，约400字，按照三个月、六个月和半年的时间段生成对应行动\n5. 第四部分为具体实施计划，需要参考微习惯和即使庆祝的理念。包含时间资源精算表（表格格式，约200字）、具体时间分配方案（约400字）、人格特化增效技巧（约300字）、紧急避坑指南（约200字）与效果追踪与迭代（约200字）\n6. 如果输入内容大部分是英文，用英文进行回答" 
+              content: systemPrompt
             },
             { 
               role: "user", 
